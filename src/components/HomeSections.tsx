@@ -47,19 +47,16 @@ export function HomeSections({ lat, lng }: HomeSectionsProps) {
 
   if (!hasAnyResults) {
     return (
-      <div className="space-y-8">
-        <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
-          <h3 className="font-display font-semibold text-lg mb-2">Gerade nichts gefunden.</h3>
-          <div className="text-sm text-muted-foreground max-w-xs space-y-2">
-            <p>Versuche es später oder schaue dir diese Alternativen an:</p>
-            <ul className="list-none space-y-0.5">
-              <li>🏞️ Spielplätze in deiner Nähe</li>
-              <li>☕ Kinderfreundliche Cafés</li>
-              <li>🏠 Indoor Spielplätze</li>
-            </ul>
-          </div>
+      <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
+        <h3 className="font-display font-semibold text-lg mb-2">Gerade nichts gefunden.</h3>
+        <div className="text-sm text-muted-foreground max-w-xs space-y-2">
+          <p>Versuche es später oder schaue dir diese Alternativen an:</p>
+          <ul className="list-none space-y-0.5">
+            <li>🏞️ Spielplätze in deiner Nähe</li>
+            <li>☕ Kinderfreundliche Cafés</li>
+            <li>🏠 Indoor Spielplätze</li>
+          </ul>
         </div>
-        <KindercafeCarousel />
       </div>
     );
   }
