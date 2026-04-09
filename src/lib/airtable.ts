@@ -25,7 +25,7 @@ export interface RawJsonEvent {
   age_label: string | null;
   price_type: string | null; // "free" | "paid"
   price: string | null;
-  registration_required: boolean;
+  registration_required: string | boolean; // "yes" | "no" or boolean
   source: string | null;
   status: string;
   verified_at: string | null;
