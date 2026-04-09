@@ -25,7 +25,7 @@ export interface RawJsonEvent {
   age_label: string | null;
   price_type: string | null; // "free" | "paid"
   price: string | null;
-  registration_required: boolean;
+  registration_required: string | boolean; // "yes" | "no" or boolean
   source: string | null;
   status: string;
   verified_at: string | null;
@@ -265,7 +265,7 @@ export async function loadAirtableActivities(): Promise<AirtableActivity[]> {
         age_groups: ageGroups,
         is_free: isFree,
         price_info: isFree ? null : raw.price || "Kostenpflichtig",
-        registration_required: raw.registration_required ?? false,
+        registration_required: raw.registration_required === "yes" || raw.registration_required === true,
         source: raw.source,
         source_url: null,
         recurring: !!isRecurring,
