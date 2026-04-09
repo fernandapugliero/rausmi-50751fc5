@@ -6,9 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
 import Admin from "./pages/Admin";
-import JetztPage from "./pages/JetztPage";
-import HeutePage from "./pages/HeutePage";
-import MorgenPage from "./pages/MorgenPage";
 import EventEinreichen from "./pages/EventEinreichen";
 import AktivitaetEinreichen from "./pages/AktivitaetEinreichen";
 import KindercafeEinreichen from "./pages/KindercafeEinreichen";
@@ -37,9 +34,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/jetzt" element={<JetztPage />} />
-          <Route path="/heute" element={<HeutePage />} />
-          <Route path="/morgen" element={<MorgenPage />} />
           <Route path="/activity/:id" element={<ActivityDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/event-einreichen" element={<EventEinreichen />} />

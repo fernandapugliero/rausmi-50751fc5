@@ -25,7 +25,7 @@ export interface RawJsonEvent {
   age_label: string | null;
   price_type: string | null; // "free" | "paid"
   price: string | null;
-  registration_required: string | null; // "yes" | "no" | null
+  registration_required: boolean;
   source: string | null;
   status: string;
   verified_at: string | null;
@@ -73,7 +73,7 @@ export interface AirtableActivity {
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 const JSON_URL =
-  "https://raw.githubusercontent.com/fernandapugliero/rausmi/main/data.json";
+  "https://raw.githubusercontent.com/SEU-USUARIO/SEU-REPO/main/data.json";
 
 const DAY_MAP: Record<string, number> = {
   Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3,
@@ -264,8 +264,8 @@ export async function loadAirtableActivities(): Promise<AirtableActivity[]> {
         end_time: occ.end,
         age_groups: ageGroups,
         is_free: isFree,
-        price_info: isFree ? null : (raw.price_type === "paid" ? (raw.price || "Kostenpflichtig") : null),
-        registration_required: raw.registration_required === "yes",
+        price_info: isFree ? null : raw.price || "Kostenpflichtig",
+        registration_required: raw.registration_required ?? false,
         source: raw.source,
         source_url: null,
         recurring: !!isRecurring,
