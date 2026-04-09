@@ -1,9 +1,7 @@
-import { Clock, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { ActivityCard } from "./ActivityCard";
 import { fetchJetztActivities, fetchHeuteActivities, fetchMorgenActivities } from "@/lib/activity-queries";
 import { useBookmarks } from "@/hooks/use-bookmarks";
-import { KindercafeCarousel } from "./KindercafeCarousel";
 
 interface HomeSectionsProps {
   lat?: number;
