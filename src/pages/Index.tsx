@@ -11,7 +11,6 @@ import { ActivityCard } from "@/components/ActivityCard";
 import { EmptyState } from "@/components/EmptyState";
 import { LocationFilter } from "@/components/LocationFilter";
 import { DistrictFilter } from "@/components/DistrictFilter";
-import { HomeSections } from "@/components/HomeSections";
 import { KindercafeCarousel } from "@/components/KindercafeCarousel";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { searchActivities } from "@/lib/activity-queries";
@@ -170,9 +169,6 @@ const Index = () => {
               </Popover>
             </section>
           )}
-
-          {/* Jetzt / Heute / Morgen sections */}
-          {!hasSearched && <HomeSections lat={filters.nearLat} lng={filters.nearLng} />}
 
           {/* Kindercafé carousel */}
           {!hasSearched && <KindercafeCarousel />}
