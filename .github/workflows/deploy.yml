@@ -25,22 +25,39 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: lts/*
+          node-version: 22
 
       - uses: oven-sh/setup-bun@v2
 
-      - run: bun install --frozen-lockfile
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
-      - run: bun run build
+      - name: Build production bundle
+        run: bun run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Verify production artifact
+        run: |
+          test -f dist/index.html
+          grep -q 'src="/assets/' dist/index.html
+          ls dist/assets/*.js >/dev/null
+          if grep -q '/src/main.tsx' dist/index.html; then
+            echo 'GitHub Pages is about to publish source files instead of the Vite production build.'
+            exit 1
+          fi
+
+      - name: Prepare GitHub Pages artifact
+        run: |
+          cp dist/index.html dist/404.html
+          touch dist/.nojekyll
 
       - uses: actions/configure-pages@v6
 
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: ./dist
 
       - id: deployment
         uses: actions/deploy-pages@v5
