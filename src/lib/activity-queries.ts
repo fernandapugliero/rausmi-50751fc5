@@ -91,7 +91,13 @@ export async function searchActivities(filters: SearchFilters) {
       todayEnd.setHours(23, 59, 59, 999);
       results = all.filter((a) => {
         const st = new Date(a.start_time);
-        return st >= now && st <= todayEnd;
+        const et = a.end_time ? new Date(a.end_time) : null;
+        // Not yet started
+        if (st > now && st <= todayEnd) return true;
+        // Currently running (started but not ended)
+        if (et && now >= st && now <= et) return true;
+        if (!et && now >= st && now.getTime() - st.getTime() < 2 * 60 * 60 * 1000) return true;
+        return false;
       });
       break;
     }

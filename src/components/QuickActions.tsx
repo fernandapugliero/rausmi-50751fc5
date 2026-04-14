@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Zap, Sun, Sunrise } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { searchActivities } from "@/lib/activity-queries";
@@ -9,13 +8,24 @@ interface QuickActionsProps {
 }
 
 export function QuickActions({ onSelect }: QuickActionsProps) {
-  // Prefetch "now" count
   const { data: nowActivities } = useQuery({
     queryKey: ["activities", { timeRange: "now" }],
     queryFn: () => searchActivities({ timeRange: "now" }),
   });
 
+  const { data: todayActivities } = useQuery({
+    queryKey: ["activities", { timeRange: "today" }],
+    queryFn: () => searchActivities({ timeRange: "today" }),
+  });
+
+  const { data: tomorrowActivities } = useQuery({
+    queryKey: ["activities", { timeRange: "tomorrow" }],
+    queryFn: () => searchActivities({ timeRange: "tomorrow" }),
+  });
+
   const nowCount = nowActivities?.length ?? null;
+  const todayCount = todayActivities?.length ?? null;
+  const tomorrowCount = tomorrowActivities?.length ?? null;
 
   const actions = [
     {
@@ -31,7 +41,9 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
     {
       key: "today" as const,
       label: "Heute",
-      sublabel: "Alle Aktivitäten heute",
+      sublabel: todayCount !== null
+        ? `${todayCount} Aktivität${todayCount === 1 ? "" : "en"} heute`
+        : "Alle Aktivitäten heute",
       icon: Sun,
       gradient: "from-secondary to-secondary/80",
       textColor: "text-secondary-foreground",
@@ -39,7 +51,9 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
     {
       key: "tomorrow" as const,
       label: "Morgen",
-      sublabel: "Alle Aktivitäten morgen",
+      sublabel: tomorrowCount !== null
+        ? `${tomorrowCount} Aktivität${tomorrowCount === 1 ? "" : "en"} morgen`
+        : "Alle Aktivitäten morgen",
       icon: Sunrise,
       gradient: "from-accent to-accent/80",
       textColor: "text-accent-foreground",
