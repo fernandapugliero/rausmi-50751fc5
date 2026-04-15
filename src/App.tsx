@@ -38,6 +38,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/jetzt" element={<Jetzt />} />
+          <Route path="/heute" element={<Heute />} />
+          <Route path="/morgen" element={<Morgen />} />
+          <Route path="/datum" element={<Datum />} />
           <Route path="/activity/:id" element={<ActivityDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/event-einreichen" element={<EventEinreichen />} />
