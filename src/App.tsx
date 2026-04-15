@@ -4,6 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Jetzt from "./pages/Jetzt";
+import Heute from "./pages/Heute";
+import Morgen from "./pages/Morgen";
+import Datum from "./pages/Datum";
 import ActivityDetail from "./pages/ActivityDetail";
 import Admin from "./pages/Admin";
 import EventEinreichen from "./pages/EventEinreichen";
@@ -34,6 +38,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/jetzt" element={<Jetzt />} />
+          <Route path="/heute" element={<Heute />} />
+          <Route path="/morgen" element={<Morgen />} />
+          <Route path="/datum" element={<Datum />} />
           <Route path="/activity/:id" element={<ActivityDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/event-einreichen" element={<EventEinreichen />} />
