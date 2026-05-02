@@ -1,16 +1,42 @@
 import { Zap, Sun, Sunrise } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import type { SearchFilters } from "@/lib/types";
+import {
+  fetchJetztActivities,
+  fetchHeuteActivities,
+  fetchMorgenActivities,
+} from "@/lib/activity-queries";
 
 interface QuickActionsProps {
   onSelect: (timeRange: SearchFilters["timeRange"]) => void;
 }
 
 export function QuickActions({ onSelect }: QuickActionsProps) {
+  const { data: jetzt } = useQuery({
+    queryKey: ["count-jetzt"],
+    queryFn: () => fetchJetztActivities(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const { data: heute } = useQuery({
+    queryKey: ["count-heute"],
+    queryFn: () => fetchHeuteActivities(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const { data: morgen } = useQuery({
+    queryKey: ["count-morgen"],
+    queryFn: () => fetchMorgenActivities(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const jetztCount = jetzt?.length ?? 0;
+  const heuteCount = heute?.length ?? 0;
+  const morgenCount = morgen?.length ?? 0;
+
   const actions = [
     {
       key: "now" as const,
       label: "Jetzt",
-      sublabel: "Aktivitäten in den nächsten 3 Stunden",
+      sublabel: `${jetztCount} ${jetztCount === 1 ? "Aktivität" : "Aktivitäten"} in den nächsten 3 Stunden`,
       icon: Zap,
       gradient: "from-primary to-primary/80",
       textColor: "text-primary-foreground",
@@ -18,7 +44,7 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
     {
       key: "today" as const,
       label: "Heute",
-      sublabel: "Alle Aktivitäten heute",
+      sublabel: `${heuteCount} ${heuteCount === 1 ? "Aktivität" : "Aktivitäten"} heute`,
       icon: Sun,
       gradient: "from-secondary to-secondary/80",
       textColor: "text-secondary-foreground",
@@ -26,7 +52,7 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
     {
       key: "tomorrow" as const,
       label: "Morgen",
-      sublabel: "Alle Aktivitäten morgen",
+      sublabel: `${morgenCount} ${morgenCount === 1 ? "Aktivität" : "Aktivitäten"} morgen`,
       icon: Sunrise,
       gradient: "from-accent to-accent/80",
       textColor: "text-accent-foreground",
