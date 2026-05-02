@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
@@ -36,13 +37,25 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [customDate, setCustomDate] = useState<Date | undefined>(initialCustomDate);
   const [isLocating, setIsLocating] = useState(false);
   const [activeLocation, setActiveLocation] = useState<string>();
+  const [searchQuery, setSearchQuery] = useState("");
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user, signOut } = useAuth();
 
-  const { data: activities, isLoading } = useQuery({
+  const { data: rawActivities, isLoading } = useQuery({
     queryKey: ["activities", filters],
     queryFn: () => searchActivities(filters),
   });
+
+  const activities = useMemo(() => {
+    if (!rawActivities) return rawActivities;
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return rawActivities;
+    return rawActivities.filter((a) =>
+      [a.title, a.description, a.location_name, a.district]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(q))
+    );
+  }, [rawActivities, searchQuery]);
 
   const handleTimeRange = (timeRange: SearchFilters["timeRange"]) => {
     if (timeRange === "now") navigate("/jetzt");
@@ -109,6 +122,20 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
               Was machen mit{" "}
               <span className="hero-highlight">Kindern</span>?
             </h2>
+          </section>
+
+          {/* Search bar */}
+          <section>
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                type="search"
+                placeholder="Suchen…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 rounded-xl bg-card border-border h-10"
+              />
+            </div>
           </section>
 
           {/* Time range tabs */}
