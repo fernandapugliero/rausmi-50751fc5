@@ -1,6 +1,4 @@
 import { Zap, Sun, Sunrise } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { searchActivities } from "@/lib/activity-queries";
 import type { SearchFilters } from "@/lib/types";
 
 interface QuickActionsProps {
@@ -8,32 +6,11 @@ interface QuickActionsProps {
 }
 
 export function QuickActions({ onSelect }: QuickActionsProps) {
-  const { data: nowActivities } = useQuery({
-    queryKey: ["activities", { timeRange: "now" }],
-    queryFn: () => searchActivities({ timeRange: "now" }),
-  });
-
-  const { data: todayActivities } = useQuery({
-    queryKey: ["activities", { timeRange: "today" }],
-    queryFn: () => searchActivities({ timeRange: "today" }),
-  });
-
-  const { data: tomorrowActivities } = useQuery({
-    queryKey: ["activities", { timeRange: "tomorrow" }],
-    queryFn: () => searchActivities({ timeRange: "tomorrow" }),
-  });
-
-  const nowCount = nowActivities?.length ?? null;
-  const todayCount = todayActivities?.length ?? null;
-  const tomorrowCount = tomorrowActivities?.length ?? null;
-
   const actions = [
     {
       key: "now" as const,
       label: "Jetzt",
-      sublabel: nowCount !== null
-        ? `${nowCount} Aktivität${nowCount === 1 ? "" : "en"} in den nächsten 3 Stunden`
-        : "Aktivitäten in den nächsten 3 Stunden",
+      sublabel: "Aktivitäten in den nächsten 3 Stunden",
       icon: Zap,
       gradient: "from-primary to-primary/80",
       textColor: "text-primary-foreground",
@@ -41,9 +18,7 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
     {
       key: "today" as const,
       label: "Heute",
-      sublabel: todayCount !== null
-        ? `${todayCount} Aktivität${todayCount === 1 ? "" : "en"} heute`
-        : "Alle Aktivitäten heute",
+      sublabel: "Alle Aktivitäten heute",
       icon: Sun,
       gradient: "from-secondary to-secondary/80",
       textColor: "text-secondary-foreground",
@@ -51,9 +26,7 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
     {
       key: "tomorrow" as const,
       label: "Morgen",
-      sublabel: tomorrowCount !== null
-        ? `${tomorrowCount} Aktivität${tomorrowCount === 1 ? "" : "en"} morgen`
-        : "Alle Aktivitäten morgen",
+      sublabel: "Alle Aktivitäten morgen",
       icon: Sunrise,
       gradient: "from-accent to-accent/80",
       textColor: "text-accent-foreground",
