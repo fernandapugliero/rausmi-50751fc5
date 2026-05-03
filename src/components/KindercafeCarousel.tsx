@@ -37,7 +37,7 @@ export function KindercafeCarousel() {
     return (
       <section className="space-y-3">
         <h2 className="font-display font-bold text-lg text-foreground">
-          ☕ Kindercafés & Spielecken
+          ☕ Kindercafés mit Spielecken
         </h2>
         <div className="flex gap-4 overflow-x-auto scrollbar-hide -mx-5 px-5">
           {[1, 2].map((i) => (
