@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, Search } from "lucide-react";
