@@ -54,7 +54,7 @@ export function KindercafeCarousel() {
     <section className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="font-display font-bold text-lg text-foreground">
-          ☕ Kindercafés & Spielecken
+          ☕ Kindercafés mit Spielecken
         </h2>
         <button
           onClick={() => navigate("/kindercafe-einreichen")}
