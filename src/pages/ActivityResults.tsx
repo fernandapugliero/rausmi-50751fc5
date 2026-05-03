@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, Search } from "lucide-react";
@@ -28,7 +28,8 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const initialCustomDate = searchParams.get("cd") ? new Date(searchParams.get("cd")!) : undefined;
+  const cdParam = searchParams.get("cd");
+  const initialCustomDate = cdParam ? new Date(cdParam) : undefined;
 
   const [filters, setFilters] = useState<SearchFilters>(() => ({
     timeRange: defaultTimeRange,
@@ -40,6 +41,17 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user, signOut } = useAuth();
+
+  // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)
+  useEffect(() => {
+    const newCustom = cdParam ? new Date(cdParam) : undefined;
+    setCustomDate(newCustom);
+    setFilters((f) => ({
+      ...f,
+      timeRange: defaultTimeRange,
+      customDate: defaultTimeRange === "custom" ? newCustom : undefined,
+    }));
+  }, [defaultTimeRange, cdParam]);
 
   const { data: rawActivities, isLoading } = useQuery({
     queryKey: ["activities", filters],
@@ -75,7 +87,6 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   };
 
   const handleCustomDate = (date: Date | undefined) => {
-    setCustomDate(date);
     if (date) {
       navigate(`/datum?cd=${date.toISOString()}`);
     }
