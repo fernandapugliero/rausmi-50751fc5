@@ -169,6 +169,20 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
             <FilterChips filters={filters} onChange={(f) => setFilters(f)} />
           </section>
 
+          {/* Search bar */}
+          <section>
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                type="search"
+                placeholder="Suchen…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 rounded-xl bg-card border-border h-10"
+              />
+            </div>
+          </section>
+
           {/* Results */}
           <section>
             {activities && activities.length > 0 && (
