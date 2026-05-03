@@ -68,8 +68,8 @@ const KindercafeDetail = () => {
       </header>
 
       {/* Hero image */}
-      <div className="px-5 mb-6">
-        <div className="rounded-2xl overflow-hidden h-48 md:h-64">
+      <div className="px-5 mb-6 max-w-4xl mx-auto">
+        <div className="rounded-2xl overflow-hidden h-72 sm:h-96 md:h-[28rem]">
           <img
             src={cafe.image_url || kindercafePlaceholder}
             alt={cafe.name}

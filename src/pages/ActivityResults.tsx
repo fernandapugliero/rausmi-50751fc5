@@ -124,20 +124,6 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
             </h2>
           </section>
 
-          {/* Search bar */}
-          <section>
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-              <Input
-                type="search"
-                placeholder="Suchen…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 rounded-xl bg-card border-border h-10"
-              />
-            </div>
-          </section>
-
           {/* Time range tabs */}
           <section className="flex gap-2 overflow-x-auto -mx-5 px-5 scrollbar-hide pb-1">
             {(["now", "today", "tomorrow"] as const).map((key) => (
@@ -181,6 +167,20 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
           {/* Filters */}
           <section>
             <FilterChips filters={filters} onChange={(f) => setFilters(f)} />
+          </section>
+
+          {/* Search bar */}
+          <section>
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                type="search"
+                placeholder="Suchen…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 rounded-xl bg-card border-border h-10"
+              />
+            </div>
           </section>
 
           {/* Results */}

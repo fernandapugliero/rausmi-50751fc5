@@ -1,0 +1,1 @@
+UPDATE public.kindercafes SET address = 'Karl-Kunger-Straße 58, 12435 Berlin' WHERE id = 'a3f8461d-2439-4c2a-a6a3-24500603cb5c';
