@@ -41,7 +41,13 @@ export async function fetchHeuteActivities(lat?: number, lng?: number): Promise<
 
   const results = all.filter((a) => {
     const st = new Date(a.start_time);
-    return st >= todayStart && st <= todayEnd;
+    const et = a.end_time ? new Date(a.end_time) : null;
+    // Not yet started today
+    if (st > now && st <= todayEnd) return true;
+    // Currently running
+    if (et && now >= st && now <= et) return true;
+    if (!et && now >= st && now.getTime() - st.getTime() < 2 * 60 * 60 * 1000) return true;
+    return false;
   });
 
   return addDistanceAndSort(results, lat, lng);
