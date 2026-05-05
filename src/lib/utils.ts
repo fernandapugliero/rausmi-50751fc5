@@ -33,11 +33,8 @@ export function formatActivityTime(startTime: Date, endTime?: Date | null): stri
   const timeStr = format(startTime, "HH:mm");
   const endStr = endTime ? ` – ${format(endTime, "HH:mm")}` : "";
   
-  if (isToday(startTime)) {
-    return `${timeStr}${endStr} · Heute`;
-  }
-  if (isTomorrow(startTime)) {
-    return `${timeStr}${endStr} · Morgen`;
+  if (isToday(startTime) || isTomorrow(startTime)) {
+    return `${timeStr}${endStr}`;
   }
   return `${timeStr}${endStr} · ${format(startTime, "EEE, dd. MMM", { locale: de })}`;
 }

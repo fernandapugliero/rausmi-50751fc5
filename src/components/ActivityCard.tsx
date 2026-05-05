@@ -139,9 +139,9 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
           {activity._ageLabel ? (
             <span className="chip chip-age">{activity._ageLabel}</span>
           ) : (
-            activity.age_groups.map((age) => (
-              <span key={age} className="chip chip-age">
-                {getAgeLabel(age)}
+            Array.from(new Set(activity.age_groups.map((age) => getAgeLabel(age)))).map((label) => (
+              <span key={label} className="chip chip-age">
+                {label}
               </span>
             ))
           )}
