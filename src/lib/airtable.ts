@@ -76,6 +76,8 @@ function expandRecurrence(
     recurrence_rule: string | null;
     start_time: string;
     end_time: string | null;
+    pause_from?: string | null;
+    pause_until?: string | null;
   },
   horizonStart: Date,
   horizonEnd: Date,
@@ -86,9 +88,15 @@ function expandRecurrence(
   const hh = anchor.getHours();
   const mm = anchor.getMinutes();
 
+  const pauseFrom = row.pause_from ? new Date(row.pause_from + "T00:00:00") : null;
+  const pauseUntil = row.pause_until ? new Date(row.pause_until + "T23:59:59") : null;
+  const inPause = (d: Date) =>
+    pauseFrom && pauseUntil && d >= pauseFrom && d <= pauseUntil;
+
   const makeOcc = (d: Date) => {
     const start = new Date(d);
     start.setHours(hh, mm, 0, 0);
+    if (inPause(start)) return null;
     const end = durationMs > 0 ? new Date(start.getTime() + durationMs) : null;
     return {
       start: start.toISOString(),
@@ -111,7 +119,7 @@ function expandRecurrence(
     d.setDate(d.getDate() + delta);
     while (d <= horizonEnd) {
       const occ = makeOcc(d);
-      if (new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
+      if (occ && new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
       d.setDate(d.getDate() + 7);
     }
     return out;
@@ -133,14 +141,14 @@ function expandRecurrence(
         const d = nthWeekdayOfMonth(ref.getFullYear(), ref.getMonth(), wd, w);
         if (!d) continue;
         const occ = makeOcc(d);
-        if (new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
+        if (occ && new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
       }
     }
     return out;
   }
 
-  // No rule → one-off: include if start_time within horizon
-  if (anchor >= horizonStart && anchor <= horizonEnd) {
+  // No rule → one-off: include if start_time within horizon and not in pause window
+  if (anchor >= horizonStart && anchor <= horizonEnd && !inPause(anchor)) {
     return [{
       start: anchor.toISOString(),
       end: anchorEnd ? anchorEnd.toISOString() : null,
