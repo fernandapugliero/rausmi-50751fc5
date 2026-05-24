@@ -342,20 +342,29 @@ Regeln:
             .join("\n\n") || null;
 
           // ── Duplicate detection vs. already-approved activities ──
+          // Match by normalized title at any venue whose name is related to this source
+          // (handles legacy entries with longer location names like "FaNN – Familienhaus …").
           const normalize = (s: string) => s.toLowerCase().normalize("NFKD")
             .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
           const normTitle = normalize(a.title);
+          const normSourceName = normalize(source.name);
           let duplicateOf: string | null = null;
           if (normTitle.length >= 4) {
-            const { data: approvedAtVenue } = await admin
+            const { data: approvedCandidates } = await admin
               .from("activities")
-              .select("id, title")
-              .eq("location_name", source.name)
+              .select("id, title, location_name, district")
+              .eq("district", source.district)
               .eq("is_approved", true);
-            for (const cand of approvedAtVenue ?? []) {
-              const candNorm = normalize(cand.title ?? "");
-              if (!candNorm) continue;
-              if (candNorm === normTitle || candNorm.includes(normTitle) || normTitle.includes(candNorm)) {
+            for (const cand of approvedCandidates ?? []) {
+              const candTitle = normalize(cand.title ?? "");
+              const candLoc = normalize(cand.location_name ?? "");
+              if (!candTitle || !candLoc) continue;
+              const sameVenue =
+                candLoc === normSourceName ||
+                candLoc.includes(normSourceName) ||
+                normSourceName.includes(candLoc);
+              if (!sameVenue) continue;
+              if (candTitle === normTitle || candTitle.includes(normTitle) || normTitle.includes(candTitle)) {
                 duplicateOf = cand.id;
                 break;
               }
