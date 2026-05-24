@@ -32,6 +32,8 @@ interface ExtractedActivity {
   registration_url?: string | null;
   category?: string | null;
   notes?: string | null;
+  pause_from?: string | null;
+  pause_until?: string | null;
 }
 
 // ─── Berlin timezone helpers ──────────────────────────────────────────────
