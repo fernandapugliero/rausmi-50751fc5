@@ -265,6 +265,8 @@ Regeln:
                     registration_url: { type: "string" },
                     category: { type: "string" },
                     notes: { type: "string" },
+                    pause_from: { type: "string", description: "YYYY-MM-DD, Start einer Pause/Ferien-Periode" },
+                    pause_until: { type: "string", description: "YYYY-MM-DD, Ende einer Pause/Ferien-Periode (inklusiv)" },
                   },
                   required: ["title", "recurrence", "start_time_local", "is_free", "registration_required"],
                 },
