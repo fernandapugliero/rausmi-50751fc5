@@ -76,6 +76,8 @@ function expandRecurrence(
     recurrence_rule: string | null;
     start_time: string;
     end_time: string | null;
+    pause_from?: string | null;
+    pause_until?: string | null;
   },
   horizonStart: Date,
   horizonEnd: Date,
