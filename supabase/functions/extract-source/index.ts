@@ -228,11 +228,11 @@ Regeln:
 - recurrence "weekly" = jede Woche am gleichen Tag/Zeit.
 - recurrence "monthly_nth" = z.B. "jeden 2. Sonntag", dann monthly_nth=2 und weekday=6.
 - recurrence "once" = einmaliges Event mit konkretem Datum (specific_date).
-- Bei Pausen/Ferien (z.B. "Sommerpause 10.8-21.8") trotzdem die Aktivität extrahieren und Pause im "notes"-Feld vermerken.
-- Wenn die Webseite sagt "pausiert" / "endet am" / "bis ...", trotzdem extrahieren und im Feld "notes" festhalten.
+- Pausen/Ferien: Wenn die Webseite eine Pause nennt (z.B. "Sommerpause 10.8.-21.8.2026"), trage die Daten STRUKTURIERT in pause_from und pause_until ein (Format YYYY-MM-DD). NICHT zusätzlich in notes oder description schreiben.
+- description: kurze sachliche Beschreibung der Aktivität selbst. KEINE Hinweise zu Pausen, Anmeldung oder Preisen — diese gehören in die eigenen Felder.
 - Falls eine Altersangabe fehlt, age_min_months=0 und age_max_months=72 setzen.
-- is_free: true wenn "kostenfrei"/"gratis" steht. Wenn Anmeldung/Gebühr erwähnt, is_free=false.
-- registration_required: true bei "Anmeldung erforderlich" / "nur mit Anmeldung".`;
+- is_free: true wenn "kostenfrei"/"gratis" steht oder nichts zu Kosten erwähnt wird. Nur false wenn explizit ein Preis oder eine Gebühr genannt wird.
+- registration_required: NUR true, wenn die Webseite WÖRTLICH "Anmeldung erforderlich", "nur mit Anmeldung", "Voranmeldung nötig" oder "bitte anmelden" für DIESE konkrete Aktivität sagt. Generische Hinweise wie "Bei Interesse melden Sie sich gerne" oder ein allgemeiner Kontakt-Link reichen NICHT. Im Zweifel false.`;
 
       const userPrompt = fetched.join("\n\n");
 
