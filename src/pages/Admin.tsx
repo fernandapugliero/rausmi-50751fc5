@@ -198,6 +198,7 @@ const Admin = () => {
               const original = isDuplicate
                 ? activities?.find((x) => x.id === (activity as { duplicate_of_activity_id?: string }).duplicate_of_activity_id)
                 : null;
+              const isCommunity = !activity.source_id && (!!activity.submitter_email || !!activity.submitted_by || activity.source === "user-submission");
               return (
               <div
                 key={activity.id}
@@ -206,8 +207,13 @@ const Admin = () => {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="font-display font-semibold text-sm">
+                    <h3 className="font-display font-semibold text-sm flex items-center gap-1.5 flex-wrap">
                       {activity.title}
+                      {isCommunity && (
+                        <Badge variant="outline" className="text-[10px] border-primary/40 text-primary bg-primary/5">
+                          Community
+                        </Badge>
+                      )}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {activity.location_name} · {activity.district}
@@ -215,6 +221,12 @@ const Admin = () => {
                     <p className="text-xs text-muted-foreground">
                       {format(new Date(activity.start_time), "dd. MMM yyyy HH:mm", { locale: de })}
                     </p>
+                    {isCommunity && (activity.submitter_name || activity.submitter_email) && (
+                      <p className="text-[11px] text-primary/80 mt-1">
+                        Eingereicht von: {activity.submitter_name || "—"}
+                        {activity.submitter_email && ` · ${activity.submitter_email}`}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-1 items-end">
                     <Badge variant={activity.is_approved ? "default" : "secondary"}>
