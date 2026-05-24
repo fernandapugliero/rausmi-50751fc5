@@ -5,8 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import type { SearchFilters } from "./types";
 import { haversineDistance } from "./search-filters";
 import { loadAirtableActivities, type AirtableActivity } from "./airtable";
+import { isBerlinHoliday } from "./german-holidays";
 
 export { formatDistance } from "./search-filters";
+
+/** Filtert Aktivitäten heraus, die auf einen Berliner Feiertag fallen. */
+function filterOutHolidays(activities: AirtableActivity[]): AirtableActivity[] {
+  return activities.filter((a) => !isBerlinHoliday(new Date(a.start_time)));
+}
 
 // ─── Section queries for home page ─────────────────────────────────────────
 
