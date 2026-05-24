@@ -147,8 +147,8 @@ function expandRecurrence(
     return out;
   }
 
-  // No rule → one-off: include if start_time within horizon
-  if (anchor >= horizonStart && anchor <= horizonEnd) {
+  // No rule → one-off: include if start_time within horizon and not in pause window
+  if (anchor >= horizonStart && anchor <= horizonEnd && !inPause(anchor)) {
     return [{
       start: anchor.toISOString(),
       end: anchorEnd ? anchorEnd.toISOString() : null,
