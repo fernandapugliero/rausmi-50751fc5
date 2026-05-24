@@ -162,6 +162,15 @@ const Admin = () => {
             Freigegeben
           </Button>
           <Button
+            variant={tab === "sources" ? "default" : "outline"}
+            size="sm"
+            className="rounded-full gap-1.5"
+            onClick={() => setTab("sources")}
+          >
+            <Database className="w-3.5 h-3.5" />
+            Quellen
+          </Button>
+          <Button
             variant={tab === "crawler" ? "default" : "outline"}
             size="sm"
             className="rounded-full gap-1.5"
@@ -172,7 +181,9 @@ const Admin = () => {
           </Button>
         </div>
 
-        {tab === "crawler" ? (
+        {tab === "sources" ? (
+          <SourcesAdmin />
+        ) : tab === "crawler" ? (
           <CrawlerOverridesAdmin />
         ) : isLoading ? (
           <div className="space-y-3">
