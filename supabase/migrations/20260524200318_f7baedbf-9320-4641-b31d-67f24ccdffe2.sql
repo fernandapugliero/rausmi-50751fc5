@@ -1,0 +1,3 @@
+UPDATE public.activities
+SET registration_required = false, updated_at = now()
+WHERE source = 'ai-extraction' AND registration_required = true;
