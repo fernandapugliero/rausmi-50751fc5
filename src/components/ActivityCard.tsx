@@ -111,10 +111,10 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
           <Clock className="w-4 h-4 shrink-0 text-primary" />
           <span className="font-medium">{formatActivityTime(startTime, endTime)}</span>
         </div>
-        {activity.recurring && activity.recurrence_rule && (
+        {activity.recurring && (activity.recurrence_rule || activity._dayOfWeek) && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Repeat className="w-4 h-4 shrink-0 text-accent" />
-            <span className="font-medium">{getRecurringDayLabel(activity.recurrence_rule)}</span>
+            <span className="font-medium">{getRecurringDayLabel(activity.recurrence_rule, activity._dayOfWeek)}</span>
           </div>
         )}
 
