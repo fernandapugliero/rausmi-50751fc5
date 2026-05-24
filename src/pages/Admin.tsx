@@ -193,7 +193,12 @@ const Admin = () => {
           </div>
         ) : filtered && filtered.length > 0 ? (
           <div className="space-y-3">
-            {filtered.map((activity) => (
+            {filtered.map((activity) => {
+              const isDuplicate = !!(activity as { duplicate_of_activity_id?: string | null }).duplicate_of_activity_id;
+              const original = isDuplicate
+                ? activities?.find((x) => x.id === (activity as { duplicate_of_activity_id?: string }).duplicate_of_activity_id)
+                : null;
+              return (
               <div
                 key={activity.id}
                 className="bg-card rounded-2xl p-4 border border-border space-y-2"
@@ -211,10 +216,23 @@ const Admin = () => {
                       {format(new Date(activity.start_time), "dd. MMM yyyy HH:mm", { locale: de })}
                     </p>
                   </div>
-                  <Badge variant={activity.is_approved ? "default" : "secondary"}>
-                    {activity.is_approved ? "Live" : "Ausstehend"}
-                  </Badge>
+                  <div className="flex flex-col gap-1 items-end">
+                    <Badge variant={activity.is_approved ? "default" : "secondary"}>
+                      {activity.is_approved ? "Live" : "Ausstehend"}
+                    </Badge>
+                    {isDuplicate && (
+                      <Badge variant="outline" className="text-[10px] border-amber-500/40 text-amber-600">
+                        Duplikat
+                      </Badge>
+                    )}
+                  </div>
                 </div>
+
+                {isDuplicate && original && (
+                  <div className="text-xs bg-amber-500/10 border border-amber-500/20 rounded-lg p-2 text-amber-700 dark:text-amber-400">
+                    Möglicherweise Duplikat von „{original.title}" ({format(new Date(original.start_time), "EEE HH:mm", { locale: de })})
+                  </div>
+                )}
 
                 {activity.description && (
                   <p className="text-xs text-muted-foreground line-clamp-2">
@@ -246,7 +264,9 @@ const Admin = () => {
                   </Button>
                 </div>
               </div>
-            ))}
+              );
+            })}
+
           </div>
         ) : (
           <EmptyState

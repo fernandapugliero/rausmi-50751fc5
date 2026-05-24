@@ -22,6 +22,7 @@ export type Database = {
           created_at: string
           description: string | null
           district: Database["public"]["Enums"]["berlin_district"]
+          duplicate_of_activity_id: string | null
           end_time: string | null
           external_key: string | null
           id: string
@@ -54,6 +55,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           district: Database["public"]["Enums"]["berlin_district"]
+          duplicate_of_activity_id?: string | null
           end_time?: string | null
           external_key?: string | null
           id?: string
@@ -86,6 +88,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           district?: Database["public"]["Enums"]["berlin_district"]
+          duplicate_of_activity_id?: string | null
           end_time?: string | null
           external_key?: string | null
           id?: string
@@ -112,6 +115,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "activities_duplicate_of_activity_id_fkey"
+            columns: ["duplicate_of_activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "activities_source_id_fkey"
             columns: ["source_id"]

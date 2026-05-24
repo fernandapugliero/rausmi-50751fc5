@@ -341,6 +341,27 @@ Regeln:
             .filter(Boolean)
             .join("\n\n") || null;
 
+          // ── Duplicate detection vs. already-approved activities ──
+          const normalize = (s: string) => s.toLowerCase().normalize("NFKD")
+            .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+          const normTitle = normalize(a.title);
+          let duplicateOf: string | null = null;
+          if (normTitle.length >= 4) {
+            const { data: approvedAtVenue } = await admin
+              .from("activities")
+              .select("id, title")
+              .eq("location_name", source.name)
+              .eq("is_approved", true);
+            for (const cand of approvedAtVenue ?? []) {
+              const candNorm = normalize(cand.title ?? "");
+              if (!candNorm) continue;
+              if (candNorm === normTitle || candNorm.includes(normTitle) || normTitle.includes(candNorm)) {
+                duplicateOf = cand.id;
+                break;
+              }
+            }
+          }
+
           const row = {
             source_id,
             external_key: extKey,
@@ -370,7 +391,9 @@ Regeln:
             source: "ai-extraction",
             source_url: source.url,
             is_approved: false,
+            duplicate_of_activity_id: duplicateOf,
           };
+
 
           // Check if exists
           const { data: existing } = await admin
