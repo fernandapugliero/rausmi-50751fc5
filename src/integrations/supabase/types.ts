@@ -23,10 +23,12 @@ export type Database = {
           description: string | null
           district: Database["public"]["Enums"]["berlin_district"]
           end_time: string | null
+          external_key: string | null
           id: string
           image_url: string | null
           is_approved: boolean
           is_free: boolean
+          last_seen_at: string | null
           latitude: number | null
           location_name: string
           longitude: number | null
@@ -36,6 +38,7 @@ export type Database = {
           registration_required: boolean
           registration_url: string | null
           source: string | null
+          source_id: string | null
           source_url: string | null
           start_time: string
           submitted_by: string | null
@@ -52,10 +55,12 @@ export type Database = {
           description?: string | null
           district: Database["public"]["Enums"]["berlin_district"]
           end_time?: string | null
+          external_key?: string | null
           id?: string
           image_url?: string | null
           is_approved?: boolean
           is_free?: boolean
+          last_seen_at?: string | null
           latitude?: number | null
           location_name: string
           longitude?: number | null
@@ -65,6 +70,7 @@ export type Database = {
           registration_required?: boolean
           registration_url?: string | null
           source?: string | null
+          source_id?: string | null
           source_url?: string | null
           start_time: string
           submitted_by?: string | null
@@ -81,10 +87,12 @@ export type Database = {
           description?: string | null
           district?: Database["public"]["Enums"]["berlin_district"]
           end_time?: string | null
+          external_key?: string | null
           id?: string
           image_url?: string | null
           is_approved?: boolean
           is_free?: boolean
+          last_seen_at?: string | null
           latitude?: number | null
           location_name?: string
           longitude?: number | null
@@ -94,6 +102,7 @@ export type Database = {
           registration_required?: boolean
           registration_url?: string | null
           source?: string | null
+          source_id?: string | null
           source_url?: string | null
           start_time?: string
           submitted_by?: string | null
@@ -102,7 +111,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "activities_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       crawler_overrides: {
         Row: {
@@ -233,6 +250,110 @@ export type Database = {
           id?: string
           is_active?: boolean
           unsubscribed_at?: string | null
+        }
+        Relationships: []
+      }
+      source_runs: {
+        Row: {
+          error: string | null
+          finished_at: string | null
+          found_count: number
+          id: string
+          model: string | null
+          new_count: number
+          raw_response: Json | null
+          source_id: string
+          started_at: string
+          status: string
+          updated_count: number
+        }
+        Insert: {
+          error?: string | null
+          finished_at?: string | null
+          found_count?: number
+          id?: string
+          model?: string | null
+          new_count?: number
+          raw_response?: Json | null
+          source_id: string
+          started_at?: string
+          status?: string
+          updated_count?: number
+        }
+        Update: {
+          error?: string | null
+          finished_at?: string | null
+          found_count?: number
+          id?: string
+          model?: string | null
+          new_count?: number
+          raw_response?: Json | null
+          source_id?: string
+          started_at?: string
+          status?: string
+          updated_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "source_runs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sources: {
+        Row: {
+          address: string | null
+          created_at: string
+          default_category: string | null
+          default_image_url: string | null
+          district: Database["public"]["Enums"]["berlin_district"]
+          extra_urls: string[]
+          id: string
+          is_active: boolean
+          last_run_at: string | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          notes: string | null
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          default_category?: string | null
+          default_image_url?: string | null
+          district: Database["public"]["Enums"]["berlin_district"]
+          extra_urls?: string[]
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          notes?: string | null
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          default_category?: string | null
+          default_image_url?: string | null
+          district?: Database["public"]["Enums"]["berlin_district"]
+          extra_urls?: string[]
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          notes?: string | null
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }
