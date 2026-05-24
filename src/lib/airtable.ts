@@ -141,7 +141,7 @@ function expandRecurrence(
         const d = nthWeekdayOfMonth(ref.getFullYear(), ref.getMonth(), wd, w);
         if (!d) continue;
         const occ = makeOcc(d);
-        if (new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
+        if (occ && new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
       }
     }
     return out;
