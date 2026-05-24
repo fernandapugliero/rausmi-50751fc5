@@ -119,7 +119,7 @@ function expandRecurrence(
     d.setDate(d.getDate() + delta);
     while (d <= horizonEnd) {
       const occ = makeOcc(d);
-      if (new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
+      if (occ && new Date(occ.start) >= horizonStart && new Date(occ.start) <= horizonEnd) out.push(occ);
       d.setDate(d.getDate() + 7);
     }
     return out;
