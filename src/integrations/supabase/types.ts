@@ -33,6 +33,8 @@ export type Database = {
           latitude: number | null
           location_name: string
           longitude: number | null
+          pause_from: string | null
+          pause_until: string | null
           price_info: string | null
           recurrence_rule: string | null
           recurring: boolean | null
@@ -66,6 +68,8 @@ export type Database = {
           latitude?: number | null
           location_name: string
           longitude?: number | null
+          pause_from?: string | null
+          pause_until?: string | null
           price_info?: string | null
           recurrence_rule?: string | null
           recurring?: boolean | null
@@ -99,6 +103,8 @@ export type Database = {
           latitude?: number | null
           location_name?: string
           longitude?: number | null
+          pause_from?: string | null
+          pause_until?: string | null
           price_info?: string | null
           recurrence_rule?: string | null
           recurring?: boolean | null
