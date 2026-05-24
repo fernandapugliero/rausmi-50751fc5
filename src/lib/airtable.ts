@@ -88,9 +88,15 @@ function expandRecurrence(
   const hh = anchor.getHours();
   const mm = anchor.getMinutes();
 
+  const pauseFrom = row.pause_from ? new Date(row.pause_from + "T00:00:00") : null;
+  const pauseUntil = row.pause_until ? new Date(row.pause_until + "T23:59:59") : null;
+  const inPause = (d: Date) =>
+    pauseFrom && pauseUntil && d >= pauseFrom && d <= pauseUntil;
+
   const makeOcc = (d: Date) => {
     const start = new Date(d);
     start.setHours(hh, mm, 0, 0);
+    if (inPause(start)) return null;
     const end = durationMs > 0 ? new Date(start.getTime() + durationMs) : null;
     return {
       start: start.toISOString(),
