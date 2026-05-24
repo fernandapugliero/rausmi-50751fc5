@@ -341,9 +341,10 @@ Regeln:
           }
 
           const extKey = externalKey(a);
-          const description = [a.description, a.notes ? `⚠️ ${a.notes}` : null]
-            .filter(Boolean)
-            .join("\n\n") || null;
+          // description: only the actual activity description — pauses go into structured fields,
+          // notes are kept internal (not shown on cards).
+          const description = a.description?.trim() || null;
+          const isValidDate = (s?: string | null) => !!s && /^\d{4}-\d{2}-\d{2}$/.test(s);
 
           // ── Duplicate detection vs. already-approved activities ──
           // Match by normalized title at any venue whose name is related to this source
