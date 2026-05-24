@@ -406,6 +406,8 @@ Regeln:
             source_url: source.url,
             is_approved: false,
             duplicate_of_activity_id: duplicateOf,
+            pause_from: isValidDate(a.pause_from) ? a.pause_from : null,
+            pause_until: isValidDate(a.pause_until) ? a.pause_until : null,
           };
 
 
