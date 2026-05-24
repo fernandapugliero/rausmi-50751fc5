@@ -180,9 +180,10 @@ function addDistanceAndSort(
   lat?: number,
   lng?: number,
 ): (AirtableActivity & { _distance?: number | null })[] {
+  const filtered = filterOutHolidays(results);
   const hasLoc = lat != null && lng != null;
 
-  const withDist = results.map((a) => {
+  const withDist = filtered.map((a) => {
     let _distance: number | null = null;
     if (hasLoc && a.latitude != null && a.longitude != null) {
       _distance = haversineDistance(lat!, lng!, a.latitude, a.longitude);
