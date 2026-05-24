@@ -120,12 +120,11 @@ const ActivityDetail = () => {
           </div>
 
           {/* Recurrence */}
-          {activity.recurring && activity._dayOfWeek && (
+          {activity.recurring && (activity.recurrence_rule || activity._dayOfWeek) && (
             <div className="flex items-center gap-3">
               <Repeat className="w-5 h-5 text-accent shrink-0" />
               <span className="text-sm font-medium">
-                {getRecurringDayLabel(activity._dayOfWeek)}
-                {activity._recurrenceType === "monthly" ? " (monatlich)" : ""}
+                {getRecurringDayLabel(activity.recurrence_rule, activity._dayOfWeek)}
               </span>
             </div>
           )}

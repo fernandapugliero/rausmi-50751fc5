@@ -66,15 +66,40 @@ export function getCategoryIcon(category?: string | null): string {
   return map[category.toLowerCase()] || "";
 }
 
-export function getRecurringDayLabel(dayOfWeek: string): string {
-  const dayMap: Record<string, string> = {
-    Montag: "Jeden Montag",
-    Dienstag: "Jeden Dienstag",
-    Mittwoch: "Jeden Mittwoch",
-    Donnerstag: "Jeden Donnerstag",
-    Freitag: "Jeden Freitag",
-    Samstag: "Jeden Samstag",
-    Sonntag: "Jeden Sonntag",
-  };
-  return dayMap[dayOfWeek] || dayOfWeek;
+const DAY_NAMES_DE = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+
+function joinDe(parts: string[]): string {
+  if (parts.length <= 1) return parts.join("");
+  if (parts.length === 2) return `${parts[0]} und ${parts[1]}`;
+  return `${parts.slice(0, -1).join(", ")} und ${parts[parts.length - 1]}`;
+}
+
+/**
+ * Format a recurrence rule + day-of-week into a human-readable German label.
+ * Accepts either a recurrence rule (weekly:X / monthly:1,3:X / monthly_nth:n:X)
+ * or a plain day name as fallback.
+ */
+export function getRecurringDayLabel(ruleOrDay: string | null | undefined, dayOfWeek?: string | null): string {
+  if (!ruleOrDay) return dayOfWeek ? `Jeden ${dayOfWeek}` : "";
+
+  const weekly = ruleOrDay.match(/^weekly:(\d)$/);
+  if (weekly) {
+    const day = DAY_NAMES_DE[parseInt(weekly[1], 10)] ?? dayOfWeek ?? "";
+    return `Jeden ${day}`;
+  }
+
+  const monthly = ruleOrDay.match(/^monthly:([\d,]+):(\d)$/);
+  const monthlyNth = ruleOrDay.match(/^monthly_nth:(\d):(\d)$/);
+  if (monthly || monthlyNth) {
+    const weeks = monthly
+      ? monthly[1].split(",").map((w) => parseInt(w, 10)).filter((n) => !isNaN(n))
+      : [parseInt(monthlyNth![1], 10)];
+    const wd = parseInt((monthly ?? monthlyNth)![2], 10);
+    const day = DAY_NAMES_DE[wd] ?? dayOfWeek ?? "";
+    return `${joinDe(weeks.map((w) => `${w}.`))} ${day} im Monat`;
+  }
+
+  // Plain day name fallback (legacy callers)
+  if (DAY_NAMES_DE.includes(ruleOrDay)) return `Jeden ${ruleOrDay}`;
+  return dayOfWeek ? `Jeden ${dayOfWeek}` : ruleOrDay;
 }
