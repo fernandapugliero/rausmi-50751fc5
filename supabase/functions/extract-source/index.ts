@@ -234,7 +234,8 @@ Regeln:
 - description: kurze sachliche Beschreibung der Aktivität selbst. KEINE Hinweise zu Pausen, Anmeldung oder Preisen — diese gehören in die eigenen Felder.
 - Falls eine Altersangabe fehlt, age_min_months=0 und age_max_months=72 setzen.
 - is_free: true wenn "kostenfrei"/"gratis" steht oder nichts zu Kosten erwähnt wird. Nur false wenn explizit ein Preis oder eine Gebühr genannt wird.
-- registration_required: NUR true, wenn die Webseite WÖRTLICH "Anmeldung erforderlich", "nur mit Anmeldung", "Voranmeldung nötig" oder "bitte anmelden" für DIESE konkrete Aktivität sagt. Generische Hinweise wie "Bei Interesse melden Sie sich gerne" oder ein allgemeiner Kontakt-Link reichen NICHT. Im Zweifel false.`;
+- registration_required: STANDARD ist false. NUR true, wenn DIREKT NEBEN dieser konkreten Aktivität ein expliziter Hinweis wie "Anmeldung erforderlich", "nur mit Anmeldung", "geschlossener Kurs", "Voranmeldung nötig" oder eine konkrete Anmelde-E-Mail/-URL für genau diese Aktivität steht. 
+  WICHTIG: Globale Hinweise wie "Bitte für alle Kurse anmelden", "Bei Interesse melden Sie sich", allgemeine Telefonnummern oder Newsletter-Hinweise zählen NICHT — sie gelten dem Haus, nicht der einzelnen Aktivität. Offene Treffs ("offener Treff", "Familientreff", "Krabbelgruppe ohne Anmeldung", "Drop-in") sind IMMER registration_required=false.`;
 
       const userPrompt = fetched.join("\n\n");
 
