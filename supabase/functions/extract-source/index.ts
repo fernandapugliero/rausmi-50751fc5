@@ -194,10 +194,24 @@ Deno.serve(async (req) => {
       // Fetch source HTML (main + extras)
       const urls = [source.url, ...(source.extra_urls ?? [])];
       const fetched: string[] = [];
+      const fetchErrors: string[] = [];
+      const BROWSER_HEADERS = {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept":
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
+      };
       for (const url of urls) {
         try {
-          const res = await fetch(url, { headers: { "User-Agent": "RausmiBot/1.0" } });
-          if (!res.ok) continue;
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 20000);
+          const res = await fetch(url, { headers: BROWSER_HEADERS, redirect: "follow", signal: ctrl.signal });
+          clearTimeout(timer);
+          if (!res.ok) {
+            fetchErrors.push(`${url} → HTTP ${res.status}`);
+            continue;
+          }
           const html = await res.text();
           // Strip HTML tags crudely to save tokens
           const text = html
@@ -208,17 +222,21 @@ Deno.serve(async (req) => {
             .trim()
             .slice(0, 30000);
           fetched.push(`--- Source: ${url} ---\n${text}`);
-        } catch (_) { /* skip */ }
+        } catch (e) {
+          fetchErrors.push(`${url} → ${e instanceof Error ? e.message : String(e)}`);
+        }
       }
 
       if (fetched.length === 0) {
+        const detail = fetchErrors.join("; ") || "no URLs configured";
         await admin.from("source_runs").update({
           status: "failed",
-          error: "Could not fetch any source URL",
+          error: `Could not fetch any source URL: ${detail}`,
           finished_at: new Date().toISOString(),
         }).eq("id", runId);
-        return json({ error: "Could not fetch source URL" }, 502);
+        return json({ error: `Could not fetch source URL. ${detail}` }, 502);
       }
+
 
       const today = new Date().toISOString().slice(0, 10);
       const systemPrompt = `Du extrahierst Kinder-Aktivitäten (0-6 Jahre) aus Webseiten von Berliner Familienzentren.
