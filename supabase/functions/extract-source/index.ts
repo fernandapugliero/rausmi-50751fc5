@@ -515,7 +515,12 @@ Regeln:
         finished_at: new Date().toISOString(),
       }).eq("id", runId);
 
-      await admin.from("sources").update({ last_run_at: new Date().toISOString() }).eq("id", source_id);
+      // Store the content hash only on a real (non-empty) successful run so a
+      // future identical fetch can be skipped without an AI call.
+      await admin.from("sources").update({
+        last_run_at: new Date().toISOString(),
+        content_hash: extracted.length > 0 ? contentHash : source.content_hash,
+      }).eq("id", source_id);
 
       return json({ success: true, found: extracted.length, new: newCount, updated: updatedCount });
     } catch (e) {
