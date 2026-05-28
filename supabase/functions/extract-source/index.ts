@@ -483,24 +483,24 @@ Regeln:
             pause_until: isValidDate(a.pause_until) ? a.pause_until : null,
           };
 
-
-          // Check if exists
-          const { data: existing } = await admin
-            .from("activities")
-            .select("id, is_approved")
-            .eq("source_id", source_id)
-            .eq("external_key", extKey)
-            .maybeSingle();
+          // Match against existing rows by STABLE signature (handles title drift).
+          const sig = sigOf(a.title, row.recurrence_rule, row.start_time);
+          const existing = existingBySig.get(sig);
 
           if (existing) {
-            // Update only metadata; keep is_approved as-is
+            // Update only metadata; keep is_approved as-is. Also rewrite the
+            // external_key so storage converges to the stable format.
             const { is_approved, ...rest } = row;
             await admin.from("activities").update(rest).eq("id", existing.id);
             updatedCount++;
           } else {
             await admin.from("activities").insert(row);
+            // Remember within this run so a second equivalent title doesn't
+            // get inserted twice in the same extraction.
+            existingBySig.set(sig, { id: "pending", is_approved: false });
             newCount++;
           }
+
         } catch (e) {
           console.error("Failed to upsert activity:", a.title, e);
         }
