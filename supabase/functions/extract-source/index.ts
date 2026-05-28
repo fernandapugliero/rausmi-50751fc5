@@ -189,7 +189,7 @@ Deno.serve(async (req) => {
     });
     if (!isAdmin) return json({ error: "Forbidden" }, 403);
 
-    const { source_id } = await req.json();
+    const { source_id, force } = await req.json();
     if (!source_id) return json({ error: "source_id required" }, 400);
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
