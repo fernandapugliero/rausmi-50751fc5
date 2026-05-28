@@ -54,15 +54,15 @@ const Index = () => {
 
         <div className="px-5 space-y-8 max-w-3xl mx-auto">
           {/* Hero */}
-          <section className="pt-6 pb-2 text-center space-y-4">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
-              Beta · aktuell nur Neukölln
-            </div>
+          <section className="pt-6 pb-2 text-center space-y-2">
             <h2 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
-              Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin machen kannst.
+              Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin<span className="text-primary align-super text-2xl">*</span> machen kannst.
             </h2>
+            <p className="text-sm text-muted-foreground">
+              *aktuell nur Neukölln
+            </p>
           </section>
+
 
 
           {/* Quick Actions + Datum */}
