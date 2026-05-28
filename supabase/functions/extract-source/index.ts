@@ -119,8 +119,18 @@ function slug(s: string): string {
     .slice(0, 60);
 }
 
+// Stable title for dedupe: strip parenthetical subtitles "(...)" and any
+// suffix after " - "/" – "/" — " so the AI adding/removing a German subtitle
+// across runs does not create a new key for the same activity.
+function stableTitleKey(title: string): string {
+  const base = title
+    .replace(/\([^)]*\)/g, " ")
+    .split(/\s[-–—]\s/)[0];
+  return slug(base);
+}
+
 function externalKey(a: ExtractedActivity): string {
-  const parts = [slug(a.title)];
+  const parts = [stableTitleKey(a.title)];
   if (a.recurrence === "weekly") {
     parts.push(`w${a.weekday ?? "x"}`, a.start_time_local);
   } else if (a.recurrence === "monthly_nth") {
@@ -130,6 +140,15 @@ function externalKey(a: ExtractedActivity): string {
   }
   return parts.join("|");
 }
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 
 function ageGroupsFromMonths(min?: number | null, max?: number | null): string[] {
   if (min == null && max == null) return [];
