@@ -28,8 +28,12 @@ const Index = () => {
           <Link to="/">
             <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
               <span className="text-2xl">🟠</span>
-              Rausmi
+              <span className="relative">
+                Rausmi
+                <span className="absolute -top-1 -right-7 text-[10px] font-semibold text-muted-foreground tracking-wide">Beta</span>
+              </span>
             </h1>
+
           </Link>
           {user ? (
             <button
