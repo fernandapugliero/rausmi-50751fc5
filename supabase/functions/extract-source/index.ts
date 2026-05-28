@@ -372,6 +372,26 @@ Regeln:
       const now = new Date();
       let newCount = 0;
       let updatedCount = 0;
+
+      // Pre-fetch existing activities for this source so we can match by a
+      // STABLE signature (stable title + recurrence) instead of the exact
+      // external_key. This makes dedupe robust to the AI rewording a title
+      // (adding/removing a German subtitle) between runs.
+      const { data: existingRows } = await admin
+        .from("activities")
+        .select("id, is_approved, external_key, title, recurrence_rule, start_time")
+        .eq("source_id", source_id);
+      const sigOf = (title: string, rule: string | null, startIso: string | null) => {
+        const base = stableTitleKey(title);
+        const rec = rule ?? `once:${(startIso ?? "").slice(0, 10)}`;
+        return `${base}::${rec}`;
+      };
+      const existingBySig = new Map<string, { id: string; is_approved: boolean }>();
+      for (const ex of existingRows ?? []) {
+        const sig = sigOf(ex.title ?? "", ex.recurrence_rule ?? null, ex.start_time ?? null);
+        if (!existingBySig.has(sig)) existingBySig.set(sig, { id: ex.id, is_approved: ex.is_approved });
+      }
+
       for (const a of extracted) {
         try {
           const [h, m] = parseHHMM(a.start_time_local);
