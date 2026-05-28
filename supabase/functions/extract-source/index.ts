@@ -225,6 +225,8 @@ Deno.serve(async (req) => {
         } catch (e) {
           fetchErrors.push(`${url} → ${e instanceof Error ? e.message : String(e)}`);
         }
+      }
+
       if (fetched.length === 0) {
         const detail = fetchErrors.join("; ") || "no URLs configured";
         await admin.from("source_runs").update({
@@ -233,11 +235,8 @@ Deno.serve(async (req) => {
           finished_at: new Date().toISOString(),
         }).eq("id", runId);
         return json({ error: `Could not fetch source URL. ${detail}` }, 502);
-
-          finished_at: new Date().toISOString(),
-        }).eq("id", runId);
-        return json({ error: "Could not fetch source URL" }, 502);
       }
+
 
       const today = new Date().toISOString().slice(0, 10);
       const systemPrompt = `Du extrahierst Kinder-Aktivitäten (0-6 Jahre) aus Webseiten von Berliner Familienzentren.
