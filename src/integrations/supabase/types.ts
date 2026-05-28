@@ -322,6 +322,7 @@ export type Database = {
       sources: {
         Row: {
           address: string | null
+          content_hash: string | null
           created_at: string
           default_category: string | null
           default_image_url: string | null
@@ -339,6 +340,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          content_hash?: string | null
           created_at?: string
           default_category?: string | null
           default_image_url?: string | null
@@ -356,6 +358,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          content_hash?: string | null
           created_at?: string
           default_category?: string | null
           default_image_url?: string | null

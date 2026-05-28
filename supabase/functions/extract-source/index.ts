@@ -119,8 +119,18 @@ function slug(s: string): string {
     .slice(0, 60);
 }
 
+// Stable title for dedupe: strip parenthetical subtitles "(...)" and any
+// suffix after " - "/" – "/" — " so the AI adding/removing a German subtitle
+// across runs does not create a new key for the same activity.
+function stableTitleKey(title: string): string {
+  const base = title
+    .replace(/\([^)]*\)/g, " ")
+    .split(/\s[-–—]\s/)[0];
+  return slug(base);
+}
+
 function externalKey(a: ExtractedActivity): string {
-  const parts = [slug(a.title)];
+  const parts = [stableTitleKey(a.title)];
   if (a.recurrence === "weekly") {
     parts.push(`w${a.weekday ?? "x"}`, a.start_time_local);
   } else if (a.recurrence === "monthly_nth") {
@@ -130,6 +140,15 @@ function externalKey(a: ExtractedActivity): string {
   }
   return parts.join("|");
 }
+
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 
 function ageGroupsFromMonths(min?: number | null, max?: number | null): string[] {
   if (min == null && max == null) return [];
@@ -170,7 +189,7 @@ Deno.serve(async (req) => {
     });
     if (!isAdmin) return json({ error: "Forbidden" }, 403);
 
-    const { source_id } = await req.json();
+    const { source_id, force } = await req.json();
     if (!source_id) return json({ error: "source_id required" }, 400);
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -185,7 +204,7 @@ Deno.serve(async (req) => {
     // Create run
     const { data: run } = await admin
       .from("source_runs")
-      .insert({ source_id, status: "running", model: "google/gemini-3-flash-preview" })
+      .insert({ source_id, status: "running", model: "google/gemini-2.5-flash-lite" })
       .select()
       .single();
     const runId = run!.id;
@@ -235,6 +254,21 @@ Deno.serve(async (req) => {
           finished_at: new Date().toISOString(),
         }).eq("id", runId);
         return json({ error: `Could not fetch source URL. ${detail}` }, 502);
+      }
+
+      // ── Skip unchanged sources ──────────────────────────────────────────
+      // Hash the combined page text. If it matches the hash stored on the last
+      // successful run, the page content has not changed → skip the (expensive)
+      // AI call entirely. `force: true` (manual "Jetzt ausführen") bypasses this.
+      const contentHash = await sha256Hex(fetched.join("\n\n"));
+      if (!force && source.content_hash && source.content_hash === contentHash) {
+        await admin.from("source_runs").update({
+          status: "skipped",
+          error: "Inhalt unverändert seit letztem Lauf — KI-Aufruf übersprungen.",
+          finished_at: new Date().toISOString(),
+        }).eq("id", runId);
+        await admin.from("sources").update({ last_run_at: new Date().toISOString() }).eq("id", source_id);
+        return json({ success: true, skipped: true, reason: "unchanged" });
       }
 
 
@@ -338,6 +372,26 @@ Regeln:
       const now = new Date();
       let newCount = 0;
       let updatedCount = 0;
+
+      // Pre-fetch existing activities for this source so we can match by a
+      // STABLE signature (stable title + recurrence) instead of the exact
+      // external_key. This makes dedupe robust to the AI rewording a title
+      // (adding/removing a German subtitle) between runs.
+      const { data: existingRows } = await admin
+        .from("activities")
+        .select("id, is_approved, external_key, title, recurrence_rule, start_time")
+        .eq("source_id", source_id);
+      const sigOf = (title: string, rule: string | null, startIso: string | null) => {
+        const base = stableTitleKey(title);
+        const rec = rule ?? `once:${(startIso ?? "").slice(0, 10)}`;
+        return `${base}::${rec}`;
+      };
+      const existingBySig = new Map<string, { id: string; is_approved: boolean }>();
+      for (const ex of existingRows ?? []) {
+        const sig = sigOf(ex.title ?? "", ex.recurrence_rule ?? null, ex.start_time ?? null);
+        if (!existingBySig.has(sig)) existingBySig.set(sig, { id: ex.id, is_approved: ex.is_approved });
+      }
+
       for (const a of extracted) {
         try {
           const [h, m] = parseHHMM(a.start_time_local);
@@ -429,24 +483,24 @@ Regeln:
             pause_until: isValidDate(a.pause_until) ? a.pause_until : null,
           };
 
-
-          // Check if exists
-          const { data: existing } = await admin
-            .from("activities")
-            .select("id, is_approved")
-            .eq("source_id", source_id)
-            .eq("external_key", extKey)
-            .maybeSingle();
+          // Match against existing rows by STABLE signature (handles title drift).
+          const sig = sigOf(a.title, row.recurrence_rule, row.start_time);
+          const existing = existingBySig.get(sig);
 
           if (existing) {
-            // Update only metadata; keep is_approved as-is
+            // Update only metadata; keep is_approved as-is. Also rewrite the
+            // external_key so storage converges to the stable format.
             const { is_approved, ...rest } = row;
             await admin.from("activities").update(rest).eq("id", existing.id);
             updatedCount++;
           } else {
             await admin.from("activities").insert(row);
+            // Remember within this run so a second equivalent title doesn't
+            // get inserted twice in the same extraction.
+            existingBySig.set(sig, { id: "pending", is_approved: false });
             newCount++;
           }
+
         } catch (e) {
           console.error("Failed to upsert activity:", a.title, e);
         }
@@ -461,7 +515,12 @@ Regeln:
         finished_at: new Date().toISOString(),
       }).eq("id", runId);
 
-      await admin.from("sources").update({ last_run_at: new Date().toISOString() }).eq("id", source_id);
+      // Store the content hash only on a real (non-empty) successful run so a
+      // future identical fetch can be skipped without an AI call.
+      await admin.from("sources").update({
+        last_run_at: new Date().toISOString(),
+        content_hash: extracted.length > 0 ? contentHash : source.content_hash,
+      }).eq("id", source_id);
 
       return json({ success: true, found: extracted.length, new: newCount, updated: updatedCount });
     } catch (e) {
