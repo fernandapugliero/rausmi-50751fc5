@@ -64,12 +64,14 @@ export const SourcesAdmin = () => {
     setRunning(sourceId);
     try {
       const { data, error } = await supabase.functions.invoke("extract-source", {
-        body: { source_id: sourceId },
+        body: { source_id: sourceId, force: true },
       });
       if (error) throw error;
-      const d = data as { found?: number; new?: number; updated?: number; error?: string };
+      const d = data as { found?: number; new?: number; updated?: number; skipped?: boolean; error?: string };
       if (d.error) {
         toast.error(d.error);
+      } else if (d.skipped) {
+        toast.info("Inhalt unverändert — übersprungen");
       } else {
         toast.success(`${d.found ?? 0} gefunden — ${d.new ?? 0} neu, ${d.updated ?? 0} aktualisiert`);
       }
