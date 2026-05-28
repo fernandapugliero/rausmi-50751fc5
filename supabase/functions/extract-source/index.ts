@@ -256,6 +256,21 @@ Deno.serve(async (req) => {
         return json({ error: `Could not fetch source URL. ${detail}` }, 502);
       }
 
+      // ── Skip unchanged sources ──────────────────────────────────────────
+      // Hash the combined page text. If it matches the hash stored on the last
+      // successful run, the page content has not changed → skip the (expensive)
+      // AI call entirely. `force: true` (manual "Jetzt ausführen") bypasses this.
+      const contentHash = await sha256Hex(fetched.join("\n\n"));
+      if (!force && source.content_hash && source.content_hash === contentHash) {
+        await admin.from("source_runs").update({
+          status: "skipped",
+          error: "Inhalt unverändert seit letztem Lauf — KI-Aufruf übersprungen.",
+          finished_at: new Date().toISOString(),
+        }).eq("id", runId);
+        await admin.from("sources").update({ last_run_at: new Date().toISOString() }).eq("id", source_id);
+        return json({ success: true, skipped: true, reason: "unchanged" });
+      }
+
 
       const today = new Date().toISOString().slice(0, 10);
       const systemPrompt = `Du extrahierst Kinder-Aktivitäten (0-6 Jahre) aus Webseiten von Berliner Familienzentren.
