@@ -204,7 +204,7 @@ Deno.serve(async (req) => {
     // Create run
     const { data: run } = await admin
       .from("source_runs")
-      .insert({ source_id, status: "running", model: "google/gemini-3-flash-preview" })
+      .insert({ source_id, status: "running", model: "google/gemini-2.5-flash-lite" })
       .select()
       .single();
     const runId = run!.id;
