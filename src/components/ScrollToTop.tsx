@@ -10,5 +10,3 @@ const ScrollToTop = () => {
 };
 
 export default ScrollToTop;
-</content>
-</invoke>
