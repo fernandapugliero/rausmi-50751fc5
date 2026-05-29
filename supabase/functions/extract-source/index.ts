@@ -253,7 +253,7 @@ Deno.serve(async (req) => {
           error: `Could not fetch any source URL: ${detail}`,
           finished_at: new Date().toISOString(),
         }).eq("id", runId);
-        return json({ error: `Could not fetch source URL. ${detail}` }, 502);
+        return json({ error: `Quelle nicht erreichbar: ${detail}`, fallback: true, found: 0, new: 0, updated: 0 }, 200);
       }
 
       // ── Skip unchanged sources ──────────────────────────────────────────
