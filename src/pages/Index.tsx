@@ -26,12 +26,9 @@ const Index = () => {
       <div className="flex-1 pb-10">
         <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
           <Link to="/">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
               <span className="text-2xl">🟠</span>
               <span>Rausmi</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                Beta
-              </span>
             </h1>
 
           </Link>
@@ -58,8 +55,9 @@ const Index = () => {
             <h2 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
               Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin<span className="text-primary align-super text-2xl">*</span> machen kannst.
             </h2>
-            <p className="text-sm text-primary/70">
-              *aktuell nur Neukölln
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold uppercase tracking-wide text-[11px] text-primary/80 mr-1.5">Beta</span>
+              *aktuell nur in Neukölln verfügbar
             </p>
           </section>
 
