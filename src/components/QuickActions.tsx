@@ -36,7 +36,7 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
     {
       key: "now" as const,
       label: "Jetzt",
-      sublabel: `${jetztCount} ${jetztCount === 1 ? "Aktivität" : "Aktivitäten"} in den nächsten 3 Stunden`,
+      sublabel: `${jetztCount} ${jetztCount === 1 ? "Aktivität" : "Aktivitäten"} in den nächsten 3 Std.`,
       icon: Zap,
       gradient: "from-primary to-primary/80",
       textColor: "text-primary-foreground",
