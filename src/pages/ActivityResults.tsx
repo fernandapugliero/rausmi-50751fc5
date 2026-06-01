@@ -40,8 +40,11 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [isLocating, setIsLocating] = useState(false);
   const [activeLocation, setActiveLocation] = useState<string>();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showRunning, setShowRunning] = useState(true);
+  const [showStarting, setShowStarting] = useState(true);
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user, signOut } = useAuth();
+
 
   // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)
   useEffect(() => {
