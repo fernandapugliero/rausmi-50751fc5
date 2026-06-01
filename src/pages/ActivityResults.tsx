@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarIcon, Search } from "lucide-react";
+import { CalendarIcon, ChevronDown, Search } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
@@ -39,8 +40,11 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [isLocating, setIsLocating] = useState(false);
   const [activeLocation, setActiveLocation] = useState<string>();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showRunning, setShowRunning] = useState(true);
+  const [showStarting, setShowStarting] = useState(true);
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user, signOut } = useAuth();
+
 
   // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)
   useEffect(() => {
@@ -68,6 +72,23 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
         .some((v) => String(v).toLowerCase().includes(q))
     );
   }, [rawActivities, searchQuery]);
+
+  // For /jetzt, split into "already running" vs "starting soon"
+  const { running, starting } = useMemo(() => {
+    if (!activities || filters.timeRange !== "now") {
+      return { running: [], starting: [] };
+    }
+    const now = Date.now();
+    const running: typeof activities = [];
+    const starting: typeof activities = [];
+    for (const a of activities) {
+      if (new Date(a.start_time).getTime() <= now) running.push(a);
+      else starting.push(a);
+    }
+    return { running, starting };
+  }, [activities, filters.timeRange]);
+
+
 
   const handleTimeRange = (timeRange: SearchFilters["timeRange"]) => {
     if (timeRange === "now") navigate("/jetzt");
@@ -196,42 +217,93 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
 
           {/* Results */}
           <section>
-            {activities && activities.length > 0 && (
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display font-bold text-lg">
-                  {timeLabels[filters.timeRange]}
-                </h2>
-                <span className="text-sm text-muted-foreground font-medium">
-                  {activities.length} {activities.length === 1 ? "Ergebnis" : "Ergebnisse"}
-                </span>
-              </div>
-            )}
-
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="h-48 rounded-2xl bg-muted animate-pulse" />
                 ))}
               </div>
-            ) : activities && activities.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {activities.map((activity, i) => (
-                  <div
-                    key={activity.id}
-                    className="animate-fade-in"
-                    style={{ animationDelay: `${i * 80}ms` }}
+            ) : !activities || activities.length === 0 ? (
+              <EmptyState />
+            ) : filters.timeRange === "now" ? (
+              <div className="space-y-6">
+                {running.length > 0 && (
+                  <CollapsibleSection
+                    label="Läuft gerade"
+                    count={running.length}
+                    open={showRunning}
+                    onToggle={() => setShowRunning((v) => !v)}
                   >
-                    <ActivityCard
-                      activity={activity}
-                      isBookmarked={isBookmarked(activity.id)}
-                      onToggleBookmark={toggle}
-                    />
-                  </div>
-                ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {running.map((activity, i) => (
+                        <div
+                          key={activity.id}
+                          className="animate-fade-in"
+                          style={{ animationDelay: `${i * 60}ms` }}
+                        >
+                          <ActivityCard
+                            activity={activity}
+                            isBookmarked={isBookmarked(activity.id)}
+                            onToggleBookmark={toggle}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleSection>
+                )}
+                {starting.length > 0 && (
+                  <CollapsibleSection
+                    label="Beginnt bald"
+                    count={starting.length}
+                    open={showStarting}
+                    onToggle={() => setShowStarting((v) => !v)}
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {starting.map((activity, i) => (
+                        <div
+                          key={activity.id}
+                          className="animate-fade-in"
+                          style={{ animationDelay: `${i * 60}ms` }}
+                        >
+                          <ActivityCard
+                            activity={activity}
+                            isBookmarked={isBookmarked(activity.id)}
+                            onToggleBookmark={toggle}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleSection>
+                )}
               </div>
             ) : (
-              <EmptyState />
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-display font-bold text-lg">
+                    {timeLabels[filters.timeRange]}
+                  </h2>
+                  <span className="text-sm text-muted-foreground font-medium">
+                    {activities.length} {activities.length === 1 ? "Ergebnis" : "Ergebnisse"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {activities.map((activity, i) => (
+                    <div
+                      key={activity.id}
+                      className="animate-fade-in"
+                      style={{ animationDelay: `${i * 80}ms` }}
+                    >
+                      <ActivityCard
+                        activity={activity}
+                        isBookmarked={isBookmarked(activity.id)}
+                        onToggleBookmark={toggle}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
+
           </section>
         </div>
         <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
@@ -241,4 +313,36 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   );
 };
 
+interface CollapsibleSectionProps {
+  label: string;
+  count: number;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+const CollapsibleSection = ({ label, count, open, onToggle, children }: CollapsibleSectionProps) => (
+  <div>
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={open}
+      className="w-full flex items-center justify-between mb-4 group"
+    >
+      <div className="flex items-baseline gap-2">
+        <h2 className="font-display font-bold text-lg text-foreground">{label}</h2>
+        <span className="text-sm text-muted-foreground font-medium">({count})</span>
+      </div>
+      <ChevronDown
+        className={cn(
+          "w-5 h-5 text-muted-foreground transition-transform duration-200 group-hover:text-foreground",
+          !open && "-rotate-90"
+        )}
+      />
+    </button>
+    {open && <div className="animate-fade-in">{children}</div>}
+  </div>
+);
+
 export default ActivityResults;
+
