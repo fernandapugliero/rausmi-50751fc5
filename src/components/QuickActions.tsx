@@ -60,22 +60,22 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {actions.map((action) => (
         <button
           key={action.key}
-          className={`w-full flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r ${action.gradient} ${action.textColor} transition-all duration-200 active:scale-[0.97] hover:scale-[1.02]`}
+          className={`w-full flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r ${action.gradient} ${action.textColor} transition-all duration-200 active:scale-[0.97] hover:scale-[1.02]`}
           style={{ boxShadow: "var(--shadow-hero)" }}
           onClick={() => onSelect(action.key)}
         >
-          <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-            <action.icon className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
+            <action.icon className="w-6 h-6" />
           </div>
-          <div className="text-left min-w-0">
+          <div className="text-left">
             <span className="font-display font-bold text-lg block leading-tight">
               {action.label}
             </span>
-            <span className="text-sm opacity-90 whitespace-nowrap">{action.sublabel}</span>
+            <span className="text-sm opacity-90">{action.sublabel}</span>
           </div>
         </button>
       ))}
