@@ -313,4 +313,36 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   );
 };
 
+interface CollapsibleSectionProps {
+  label: string;
+  count: number;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+const CollapsibleSection = ({ label, count, open, onToggle, children }: CollapsibleSectionProps) => (
+  <div>
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={open}
+      className="w-full flex items-center justify-between mb-4 group"
+    >
+      <div className="flex items-baseline gap-2">
+        <h2 className="font-display font-bold text-lg text-foreground">{label}</h2>
+        <span className="text-sm text-muted-foreground font-medium">({count})</span>
+      </div>
+      <ChevronDown
+        className={cn(
+          "w-5 h-5 text-muted-foreground transition-transform duration-200 group-hover:text-foreground",
+          !open && "-rotate-90"
+        )}
+      />
+    </button>
+    {open && <div className="animate-fade-in">{children}</div>}
+  </div>
+);
+
 export default ActivityResults;
+
