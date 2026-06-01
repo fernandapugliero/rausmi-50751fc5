@@ -73,6 +73,23 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
     );
   }, [rawActivities, searchQuery]);
 
+  // For /jetzt, split into "already running" vs "starting soon"
+  const { running, starting } = useMemo(() => {
+    if (!activities || filters.timeRange !== "now") {
+      return { running: [], starting: [] };
+    }
+    const now = Date.now();
+    const running: typeof activities = [];
+    const starting: typeof activities = [];
+    for (const a of activities) {
+      if (new Date(a.start_time).getTime() <= now) running.push(a);
+      else starting.push(a);
+    }
+    return { running, starting };
+  }, [activities, filters.timeRange]);
+
+
+
   const handleTimeRange = (timeRange: SearchFilters["timeRange"]) => {
     if (timeRange === "now") navigate("/jetzt");
     else if (timeRange === "today") navigate("/heute");
