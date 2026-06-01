@@ -217,42 +217,93 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
 
           {/* Results */}
           <section>
-            {activities && activities.length > 0 && (
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display font-bold text-lg">
-                  {timeLabels[filters.timeRange]}
-                </h2>
-                <span className="text-sm text-muted-foreground font-medium">
-                  {activities.length} {activities.length === 1 ? "Ergebnis" : "Ergebnisse"}
-                </span>
-              </div>
-            )}
-
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="h-48 rounded-2xl bg-muted animate-pulse" />
                 ))}
               </div>
-            ) : activities && activities.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {activities.map((activity, i) => (
-                  <div
-                    key={activity.id}
-                    className="animate-fade-in"
-                    style={{ animationDelay: `${i * 80}ms` }}
+            ) : !activities || activities.length === 0 ? (
+              <EmptyState />
+            ) : filters.timeRange === "now" ? (
+              <div className="space-y-6">
+                {running.length > 0 && (
+                  <CollapsibleSection
+                    label="Läuft gerade"
+                    count={running.length}
+                    open={showRunning}
+                    onToggle={() => setShowRunning((v) => !v)}
                   >
-                    <ActivityCard
-                      activity={activity}
-                      isBookmarked={isBookmarked(activity.id)}
-                      onToggleBookmark={toggle}
-                    />
-                  </div>
-                ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {running.map((activity, i) => (
+                        <div
+                          key={activity.id}
+                          className="animate-fade-in"
+                          style={{ animationDelay: `${i * 60}ms` }}
+                        >
+                          <ActivityCard
+                            activity={activity}
+                            isBookmarked={isBookmarked(activity.id)}
+                            onToggleBookmark={toggle}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleSection>
+                )}
+                {starting.length > 0 && (
+                  <CollapsibleSection
+                    label="Beginnt bald"
+                    count={starting.length}
+                    open={showStarting}
+                    onToggle={() => setShowStarting((v) => !v)}
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {starting.map((activity, i) => (
+                        <div
+                          key={activity.id}
+                          className="animate-fade-in"
+                          style={{ animationDelay: `${i * 60}ms` }}
+                        >
+                          <ActivityCard
+                            activity={activity}
+                            isBookmarked={isBookmarked(activity.id)}
+                            onToggleBookmark={toggle}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleSection>
+                )}
               </div>
             ) : (
-              <EmptyState />
+              <>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-display font-bold text-lg">
+                    {timeLabels[filters.timeRange]}
+                  </h2>
+                  <span className="text-sm text-muted-foreground font-medium">
+                    {activities.length} {activities.length === 1 ? "Ergebnis" : "Ergebnisse"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {activities.map((activity, i) => (
+                    <div
+                      key={activity.id}
+                      className="animate-fade-in"
+                      style={{ animationDelay: `${i * 80}ms` }}
+                    >
+                      <ActivityCard
+                        activity={activity}
+                        isBookmarked={isBookmarked(activity.id)}
+                        onToggleBookmark={toggle}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
+
           </section>
         </div>
         <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
