@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarIcon, Search } from "lucide-react";
+import { CalendarIcon, ChevronDown, Search } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
