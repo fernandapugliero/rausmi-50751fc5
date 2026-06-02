@@ -69,14 +69,19 @@ const Konto = () => {
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) {
-          setProfile({
-            display_name: data.display_name ?? "",
-            city: data.city ?? "",
-            district: data.district ?? "",
-            children_ages: data.children_ages ?? [],
-          });
-        }
+        const next: ProfileData = {
+          display_name: data?.display_name ?? "",
+          city: data?.city ?? "",
+          district: data?.district ?? "",
+          children_ages: data?.children_ages ?? [],
+        };
+        setProfile(next);
+        const hasAny =
+          !!next.display_name.trim() ||
+          !!next.city.trim() ||
+          !!next.district ||
+          next.children_ages.length > 0;
+        setEditing(!hasAny);
         setLoadingProfile(false);
       });
   }, [user]);
