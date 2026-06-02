@@ -384,9 +384,6 @@ const Konto = () => {
               </div>
             )}
           </section>
-              </div>
-            )}
-          </section>
 
           {/* Sign out */}
           <section className="pt-4">
