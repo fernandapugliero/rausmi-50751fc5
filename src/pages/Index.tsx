@@ -13,7 +13,7 @@ import type { SearchFilters } from "@/lib/types";
 const Index = () => {
   const navigate = useNavigate();
   const { showAuthDialog, setShowAuthDialog } = useBookmarks();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const handleQuickAction = (timeRange: SearchFilters["timeRange"]) => {
     if (timeRange === "now") navigate("/jetzt");

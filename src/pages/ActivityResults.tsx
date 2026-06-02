@@ -43,7 +43,7 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [showRunning, setShowRunning] = useState(true);
   const [showStarting, setShowStarting] = useState(true);
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
 
   // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)

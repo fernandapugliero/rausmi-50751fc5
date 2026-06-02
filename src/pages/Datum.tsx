@@ -14,7 +14,7 @@ const Datum = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const cdParam = searchParams.get("cd");
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { showAuthDialog, setShowAuthDialog } = useBookmarks();
 
   if (cdParam) {
