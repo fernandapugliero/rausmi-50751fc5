@@ -39,9 +39,9 @@ const Datum = () => {
             </h1>
           </Link>
           {user ? (
-            <button onClick={signOut} className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors">
-              Abmelden
-            </button>
+            <Link to="/konto" className="text-sm text-primary font-semibold hover:underline transition-colors">
+              Mein Konto
+            </Link>
           ) : (
             <button onClick={() => setShowAuthDialog(true)} className="text-sm text-primary font-semibold hover:underline transition-colors">
               Anmelden

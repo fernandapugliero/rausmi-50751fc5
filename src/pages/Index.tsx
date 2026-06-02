@@ -33,12 +33,12 @@ const Index = () => {
 
           </Link>
           {user ? (
-            <button
-              onClick={signOut}
-              className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
+            <Link
+              to="/konto"
+              className="text-sm text-primary font-semibold hover:underline transition-colors"
             >
-              Abmelden
-            </button>
+              Mein Konto
+            </Link>
           ) : (
             <button
               onClick={() => setShowAuthDialog(true)}
