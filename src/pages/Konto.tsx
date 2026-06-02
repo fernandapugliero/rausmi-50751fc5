@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, X, LogOut, ArrowLeft, Loader2 } from "lucide-react";
+import { Plus, X, LogOut, ArrowLeft, Loader2, Pencil } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { ActivityCard } from "@/components/ActivityCard";
 import { Input } from "@/components/ui/input";
