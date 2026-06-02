@@ -116,6 +116,7 @@ const Konto = () => {
       return;
     }
     toast.success("Profil gespeichert");
+    setEditing(false);
   };
 
   const addChild = () => {
