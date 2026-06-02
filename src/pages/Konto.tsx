@@ -174,49 +174,68 @@ const Konto = () => {
             </p>
           </section>
 
-          {/* Saved events */}
+          {/* Profile */}
           <section>
-            <h3 className="font-display font-bold text-lg mb-4">
-              Gespeicherte Events{" "}
-              <span className="text-sm text-muted-foreground font-medium">
-                ({bookmarkedActivities.length})
-              </span>
-            </h3>
-            {bookmarkedActivities.length === 0 ? (
-              <div className="rounded-2xl bg-card border border-border p-6 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Du hast noch keine Events gespeichert.
-                </p>
-                <Link
-                  to="/"
-                  className="inline-block mt-3 text-sm text-primary font-semibold hover:underline"
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="font-display font-bold text-lg">Profil</h3>
+              {!loadingProfile && !editing && hasProfileData && (
+                <button
+                  type="button"
+                  onClick={() => setEditing(true)}
+                  className="flex items-center gap-1 text-sm text-primary font-semibold hover:underline"
                 >
-                  Events entdecken →
-                </Link>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {bookmarkedActivities.map((activity) => (
-                  <ActivityCard
-                    key={activity.id}
-                    activity={activity}
-                    isBookmarked={true}
-                    onToggleBookmark={toggle}
-                  />
-                ))}
-              </div>
+                  <Pencil className="w-3.5 h-3.5" />
+                  Bearbeiten
+                </button>
+              )}
+            </div>
+            {(!hasProfileData || editing) && (
+              <p className="text-sm text-muted-foreground mb-4">
+                Optional – hilft uns, passende Events zu empfehlen.
+              </p>
             )}
-          </section>
-
-          {/* Profile form */}
-          <section>
-            <h3 className="font-display font-bold text-lg mb-1">Profil</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Optional – hilft uns, passende Events zu empfehlen.
-            </p>
 
             {loadingProfile ? (
               <div className="h-32 rounded-2xl bg-muted animate-pulse" />
+            ) : !editing && hasProfileData ? (
+              <div className="rounded-2xl bg-card border border-border p-5 space-y-3">
+                {profile.display_name && (
+                  <div className="flex justify-between gap-4">
+                    <span className="text-sm text-muted-foreground">Name</span>
+                    <span className="text-sm font-medium text-foreground text-right">
+                      {profile.display_name}
+                    </span>
+                  </div>
+                )}
+                {profile.city && (
+                  <div className="flex justify-between gap-4">
+                    <span className="text-sm text-muted-foreground">Stadt</span>
+                    <span className="text-sm font-medium text-foreground text-right">
+                      {profile.city}
+                    </span>
+                  </div>
+                )}
+                {districtLabel && (
+                  <div className="flex justify-between gap-4">
+                    <span className="text-sm text-muted-foreground">Bezirk</span>
+                    <span className="text-sm font-medium text-foreground text-right">
+                      {districtLabel}
+                    </span>
+                  </div>
+                )}
+                {profile.children_ages.length > 0 && (
+                  <div className="flex justify-between gap-4 items-start">
+                    <span className="text-sm text-muted-foreground">Kinder</span>
+                    <div className="flex flex-wrap gap-1.5 justify-end">
+                      {profile.children_ages.map((age, idx) => (
+                        <span key={idx} className="chip chip-age">
+                          {age} {age === 1 ? "Jahr" : "Jahre"}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="space-y-5 rounded-2xl bg-card border border-border p-5">
                 <div className="space-y-2">
@@ -328,6 +347,43 @@ const Konto = () => {
                 >
                   {saving ? "Speichert…" : "Profil speichern"}
                 </Button>
+              </div>
+            )}
+          </section>
+
+          {/* Saved events */}
+          <section>
+            <h3 className="font-display font-bold text-lg mb-4">
+              Gespeicherte Events{" "}
+              <span className="text-sm text-muted-foreground font-medium">
+                ({bookmarkedActivities.length})
+              </span>
+            </h3>
+            {bookmarkedActivities.length === 0 ? (
+              <div className="rounded-2xl bg-card border border-border p-6 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Du hast noch keine Events gespeichert.
+                </p>
+                <Link
+                  to="/"
+                  className="inline-block mt-3 text-sm text-primary font-semibold hover:underline"
+                >
+                  Events entdecken →
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {bookmarkedActivities.map((activity) => (
+                  <ActivityCard
+                    key={activity.id}
+                    activity={activity}
+                    isBookmarked={true}
+                    onToggleBookmark={toggle}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
               </div>
             )}
           </section>
