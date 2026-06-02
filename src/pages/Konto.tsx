@@ -103,13 +103,16 @@ const Konto = () => {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({
-        display_name: profile.display_name.trim() || null,
-        city: profile.city.trim() || null,
-        district: isBerlin ? profile.district || null : null,
-        children_ages: profile.children_ages,
-      })
-      .eq("user_id", user.id);
+      .upsert(
+        {
+          user_id: user.id,
+          display_name: profile.display_name.trim() || null,
+          city: profile.city.trim() || null,
+          district: isBerlin ? profile.district || null : null,
+          children_ages: profile.children_ages,
+        },
+        { onConflict: "user_id" }
+      );
     setSaving(false);
     if (error) {
       toast.error("Speichern fehlgeschlagen");
