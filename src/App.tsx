@@ -15,6 +15,7 @@ import AktivitaetEinreichen from "./pages/AktivitaetEinreichen";
 import KindercafeEinreichen from "./pages/KindercafeEinreichen";
 import KindercafeDetail from "./pages/KindercafeDetail";
 import UeberRausi from "./pages/UeberRausi";
+import Konto from "./pages/Konto";
 import Kontakt from "./pages/Kontakt";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
@@ -51,6 +52,7 @@ const App = () => (
           <Route path="/kindercafe-einreichen" element={<KindercafeEinreichen />} />
           <Route path="/kindercafe/:id" element={<KindercafeDetail />} />
           <Route path="/ueber" element={<UeberRausi />} />
+          <Route path="/konto" element={<Konto />} />
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/datenschutz" element={<Datenschutz />} />

@@ -14,7 +14,7 @@ const Datum = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const cdParam = searchParams.get("cd");
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { showAuthDialog, setShowAuthDialog } = useBookmarks();
 
   if (cdParam) {
@@ -39,9 +39,9 @@ const Datum = () => {
             </h1>
           </Link>
           {user ? (
-            <button onClick={signOut} className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors">
-              Abmelden
-            </button>
+            <Link to="/konto" className="text-sm text-primary font-semibold hover:underline transition-colors">
+              Mein Konto
+            </Link>
           ) : (
             <button onClick={() => setShowAuthDialog(true)} className="text-sm text-primary font-semibold hover:underline transition-colors">
               Anmelden

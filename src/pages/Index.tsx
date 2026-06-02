@@ -13,7 +13,7 @@ import type { SearchFilters } from "@/lib/types";
 const Index = () => {
   const navigate = useNavigate();
   const { showAuthDialog, setShowAuthDialog } = useBookmarks();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
   const handleQuickAction = (timeRange: SearchFilters["timeRange"]) => {
     if (timeRange === "now") navigate("/jetzt");
@@ -33,12 +33,12 @@ const Index = () => {
 
           </Link>
           {user ? (
-            <button
-              onClick={signOut}
-              className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
+            <Link
+              to="/konto"
+              className="text-sm text-primary font-semibold hover:underline transition-colors"
             >
-              Abmelden
-            </button>
+              Mein Konto
+            </Link>
           ) : (
             <button
               onClick={() => setShowAuthDialog(true)}

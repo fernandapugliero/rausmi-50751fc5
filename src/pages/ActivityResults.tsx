@@ -43,7 +43,7 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [showRunning, setShowRunning] = useState(true);
   const [showStarting, setShowStarting] = useState(true);
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
 
 
   // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)
@@ -131,12 +131,12 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
             </h1>
           </Link>
           {user ? (
-            <button
-              onClick={signOut}
-              className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
+            <Link
+              to="/konto"
+              className="text-sm text-primary font-semibold hover:underline transition-colors"
             >
-              Abmelden
-            </button>
+              Mein Konto
+            </Link>
           ) : (
             <button
               onClick={() => setShowAuthDialog(true)}
@@ -277,31 +277,72 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
                 )}
               </div>
             ) : (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-display font-bold text-lg">
-                    {timeLabels[filters.timeRange]}
-                  </h2>
-                  <span className="text-sm text-muted-foreground font-medium">
-                    {activities.length} {activities.length === 1 ? "Ergebnis" : "Ergebnisse"}
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {activities.map((activity, i) => (
-                    <div
-                      key={activity.id}
-                      className="animate-fade-in"
-                      style={{ animationDelay: `${i * 80}ms` }}
-                    >
-                      <ActivityCard
-                        activity={activity}
-                        isBookmarked={isBookmarked(activity.id)}
-                        onToggleBookmark={toggle}
-                      />
+              (() => {
+                const saved = activities.filter((a) => isBookmarked(a.id));
+                const others = activities.filter((a) => !isBookmarked(a.id));
+                return (
+                  <div className="space-y-8">
+                    {saved.length > 0 && (
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <h2 className="font-display font-bold text-lg text-foreground">
+                            Gespeichert
+                          </h2>
+                          <span className="text-sm text-muted-foreground font-medium">
+                            ({saved.length})
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {saved.map((activity, i) => (
+                            <div
+                              key={activity.id}
+                              className="animate-fade-in"
+                              style={{ animationDelay: `${i * 60}ms` }}
+                            >
+                              <ActivityCard
+                                activity={activity}
+                                isBookmarked={true}
+                                onToggleBookmark={toggle}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="font-display font-bold text-lg">
+                          {timeLabels[filters.timeRange]}
+                        </h2>
+                        <span className="text-sm text-muted-foreground font-medium">
+                          {others.length} {others.length === 1 ? "Ergebnis" : "Ergebnisse"}
+                        </span>
+                      </div>
+                      {others.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                          Keine weiteren Events.
+                        </p>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {others.map((activity, i) => (
+                            <div
+                              key={activity.id}
+                              className="animate-fade-in"
+                              style={{ animationDelay: `${i * 80}ms` }}
+                            >
+                              <ActivityCard
+                                activity={activity}
+                                isBookmarked={false}
+                                onToggleBookmark={toggle}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </>
+                  </div>
+                );
+              })()
             )}
 
           </section>
