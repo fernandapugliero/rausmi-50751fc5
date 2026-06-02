@@ -269,6 +269,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          children_ages: number[]
+          city: string | null
+          created_at: string
+          display_name: string | null
+          district: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          children_ages?: number[]
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          district?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          children_ages?: number[]
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          district?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       source_runs: {
         Row: {
           error: string | null
