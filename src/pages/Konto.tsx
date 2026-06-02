@@ -44,8 +44,15 @@ const Konto = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [saving, setSaving] = useState(false);
   const [newAge, setNewAge] = useState<string>("");
+  const [editing, setEditing] = useState(false);
 
   const isBerlin = profile.city.trim().toLowerCase() === "berlin";
+  const hasProfileData =
+    !!profile.display_name.trim() ||
+    !!profile.city.trim() ||
+    !!profile.district ||
+    profile.children_ages.length > 0;
+  const districtLabel = DISTRICT_OPTIONS.find((d) => d.value === profile.district)?.label;
 
   // Redirect if not logged in (once auth resolved)
   useEffect(() => {
