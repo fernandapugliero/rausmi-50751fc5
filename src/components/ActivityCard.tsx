@@ -1,10 +1,11 @@
-import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star, Link2, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
 import type { AirtableActivity } from "@/lib/airtable";
 import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon, getRecurringDayLabel } from "@/lib/utils";
 import { formatDistance } from "@/lib/activity-queries";
 import { toast } from "sonner";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 interface ActivityCardProps {
   activity: (Activity | AirtableActivity) & { _distance?: number | null; _ageLabel?: string | null; _sponsored?: boolean; _recurrenceType?: string | null; _dayOfWeek?: string | null };
@@ -23,29 +24,28 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
     onToggleBookmark?.(activity.id);
   };
 
-  const handleShare = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const baseUrl = window.location.origin || window.location.protocol + '//' + window.location.host;
-    const url = `${baseUrl}/activity/${activity.id}`;
-    const text = `${activity.title} – ${activity.location_name}`;
+  const shareUrl = `${(typeof window !== "undefined" && window.location.origin) || ""}/activity/${activity.id}`;
+  const shareText = `${activity.title} – ${activity.location_name}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
 
+  const handleNativeShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       if (navigator.share) {
-        await navigator.share({ title: activity.title, text, url });
-        return;
+        await navigator.share({ title: activity.title, text: shareText, url: shareUrl });
       }
     } catch {
-      // share cancelled or failed, fall through
+      // cancelled
     }
+  };
 
-    // Fallback: copy to clipboard (URL only)
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       toast.success("Link kopiert!");
     } catch {
-      // Last fallback: WhatsApp
-      const waUrl = `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`;
-      window.open(waUrl, "_blank");
+      toast.error("Konnte Link nicht kopieren");
     }
   };
 
@@ -70,13 +70,49 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
             )}
           </div>
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
-              aria-label="Teilen"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
+                  aria-label="Teilen"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="w-48 p-1.5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4 text-secondary" />
+                  WhatsApp
+                </a>
+                <button
+                  onClick={handleCopyLink}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left"
+                >
+                  <Link2 className="w-4 h-4 text-primary" />
+                  Link kopieren
+                </button>
+                {typeof navigator !== "undefined" && "share" in navigator && (
+                  <button
+                    onClick={handleNativeShare}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left"
+                  >
+                    <Share2 className="w-4 h-4 text-muted-foreground" />
+                    Mehr…
+                  </button>
+                )}
+              </PopoverContent>
+            </Popover>
             {onToggleBookmark && (
               <button
                 onClick={handleBookmark}
