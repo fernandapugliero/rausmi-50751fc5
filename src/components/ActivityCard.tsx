@@ -1,10 +1,11 @@
-import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star, Link2, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
 import type { AirtableActivity } from "@/lib/airtable";
 import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon, getRecurringDayLabel } from "@/lib/utils";
 import { formatDistance } from "@/lib/activity-queries";
 import { toast } from "sonner";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 interface ActivityCardProps {
   activity: (Activity | AirtableActivity) & { _distance?: number | null; _ageLabel?: string | null; _sponsored?: boolean; _recurrenceType?: string | null; _dayOfWeek?: string | null };
