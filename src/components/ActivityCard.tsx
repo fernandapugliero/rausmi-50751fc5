@@ -70,13 +70,49 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
             )}
           </div>
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
-              aria-label="Teilen"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
+                  aria-label="Teilen"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="w-48 p-1.5"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4 text-secondary" />
+                  WhatsApp
+                </a>
+                <button
+                  onClick={handleCopyLink}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left"
+                >
+                  <Link2 className="w-4 h-4 text-primary" />
+                  Link kopieren
+                </button>
+                {typeof navigator !== "undefined" && "share" in navigator && (
+                  <button
+                    onClick={handleNativeShare}
+                    className="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left"
+                  >
+                    <Share2 className="w-4 h-4 text-muted-foreground" />
+                    Mehr…
+                  </button>
+                )}
+              </PopoverContent>
+            </Popover>
             {onToggleBookmark && (
               <button
                 onClick={handleBookmark}
