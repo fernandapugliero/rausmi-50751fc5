@@ -24,29 +24,28 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
     onToggleBookmark?.(activity.id);
   };
 
-  const handleShare = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const baseUrl = window.location.origin || window.location.protocol + '//' + window.location.host;
-    const url = `${baseUrl}/activity/${activity.id}`;
-    const text = `${activity.title} – ${activity.location_name}`;
+  const shareUrl = `${(typeof window !== "undefined" && window.location.origin) || ""}/activity/${activity.id}`;
+  const shareText = `${activity.title} – ${activity.location_name}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
 
+  const handleNativeShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       if (navigator.share) {
-        await navigator.share({ title: activity.title, text, url });
-        return;
+        await navigator.share({ title: activity.title, text: shareText, url: shareUrl });
       }
     } catch {
-      // share cancelled or failed, fall through
+      // cancelled
     }
+  };
 
-    // Fallback: copy to clipboard (URL only)
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareUrl);
       toast.success("Link kopiert!");
     } catch {
-      // Last fallback: WhatsApp
-      const waUrl = `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`;
-      window.open(waUrl, "_blank");
+      toast.error("Konnte Link nicht kopieren");
     }
   };
 
