@@ -33,9 +33,12 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
     try {
       if (navigator.share) {
         await navigator.share({ title: activity.title, text: shareText, url: shareUrl });
+      } else {
+        throw new Error("not supported");
       }
     } catch {
-      // cancelled
+      await navigator.clipboard.writeText(shareUrl);
+      toast.info("Teilen nicht verfügbar – Link wurde kopiert!");
     }
   };
 
