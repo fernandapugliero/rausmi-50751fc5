@@ -48,22 +48,18 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
 
   // Time-of-day range slider (everything except "now")
   const showTimeSlider = defaultTimeRange !== "now";
-  const minMinute = useMemo(() => {
+  // Initial "from" defaults to the current half-hour only when the target date is today.
+  // We compute this once per (defaultTimeRange, cdParam) change — not per render — so dragging
+  // the slider never causes a reset.
+  const initialFromMinute = useMemo(() => {
+    if (defaultTimeRange !== "today") return 0;
     const now = new Date();
-    const targetDate = customDate ?? new Date();
-    const isToday =
-      targetDate.getDate() === now.getDate() &&
-      targetDate.getMonth() === now.getMonth() &&
-      targetDate.getFullYear() === now.getFullYear();
-    if (isToday) {
-      return Math.floor((now.getHours() * 60 + now.getMinutes()) / 30) * 30;
-    }
-    return 0;
-  }, [customDate]);
-  const [hourRange, setHourRange] = useState<[number, number]>([minMinute, 1440]);
+    return Math.floor((now.getHours() * 60 + now.getMinutes()) / 30) * 30;
+  }, [defaultTimeRange, cdParam]);
+  const [hourRange, setHourRange] = useState<[number, number]>([initialFromMinute, 1440]);
   useEffect(() => {
-    setHourRange([minMinute, 1440]);
-  }, [minMinute, defaultTimeRange]);
+    setHourRange([initialFromMinute, 1440]);
+  }, [initialFromMinute]);
 
 
   // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)
@@ -238,16 +234,10 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
               <TimeRangeSlider
                 value={hourRange}
                 onValueChange={setHourRange}
-                min={minMinute}
+                min={0}
                 max={1440}
                 step={30}
-                label={
-                  defaultTimeRange === "today"
-                    ? "Uhrzeit heute"
-                    : defaultTimeRange === "tomorrow"
-                    ? "Uhrzeit morgen"
-                    : "Uhrzeit"
-                }
+                label="Zeitfenster"
               />
             </section>
           )}
