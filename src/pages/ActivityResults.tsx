@@ -234,16 +234,10 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
               <TimeRangeSlider
                 value={hourRange}
                 onValueChange={setHourRange}
-                min={minMinute}
+                min={0}
                 max={1440}
                 step={30}
-                label={
-                  defaultTimeRange === "today"
-                    ? "Uhrzeit heute"
-                    : defaultTimeRange === "tomorrow"
-                    ? "Uhrzeit morgen"
-                    : "Uhrzeit"
-                }
+                label="Zeitfenster"
               />
             </section>
           )}
