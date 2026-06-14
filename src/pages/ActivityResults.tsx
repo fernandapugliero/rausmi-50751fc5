@@ -46,6 +46,18 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user } = useAuth();
 
+  // Time-of-day range slider (only used for "today" and "tomorrow")
+  const showTimeSlider = defaultTimeRange === "today" || defaultTimeRange === "tomorrow";
+  const minMinute = useMemo(() => {
+    if (defaultTimeRange !== "today") return 0;
+    const now = new Date();
+    return Math.floor((now.getHours() * 60 + now.getMinutes()) / 30) * 30;
+  }, [defaultTimeRange]);
+  const [hourRange, setHourRange] = useState<[number, number]>([minMinute, 1440]);
+  useEffect(() => {
+    setHourRange([minMinute, 1440]);
+  }, [minMinute, defaultTimeRange]);
+
 
   // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)
   useEffect(() => {
