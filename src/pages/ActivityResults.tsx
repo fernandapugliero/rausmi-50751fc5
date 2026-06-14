@@ -19,6 +19,7 @@ import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import type { SearchFilters } from "@/lib/types";
+import { TimeRangeSlider } from "@/components/TimeRangeSlider";
 
 interface ActivityResultsProps {
   defaultTimeRange: SearchFilters["timeRange"];
