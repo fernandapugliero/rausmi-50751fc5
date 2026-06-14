@@ -46,13 +46,20 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user } = useAuth();
 
-  // Time-of-day range slider (only used for "today" and "tomorrow")
-  const showTimeSlider = defaultTimeRange === "today" || defaultTimeRange === "tomorrow";
+  // Time-of-day range slider (everything except "now")
+  const showTimeSlider = defaultTimeRange !== "now";
   const minMinute = useMemo(() => {
-    if (defaultTimeRange !== "today") return 0;
     const now = new Date();
-    return Math.floor((now.getHours() * 60 + now.getMinutes()) / 30) * 30;
-  }, [defaultTimeRange]);
+    const targetDate = customDate ?? new Date();
+    const isToday =
+      targetDate.getDate() === now.getDate() &&
+      targetDate.getMonth() === now.getMonth() &&
+      targetDate.getFullYear() === now.getFullYear();
+    if (isToday) {
+      return Math.floor((now.getHours() * 60 + now.getMinutes()) / 30) * 30;
+    }
+    return 0;
+  }, [customDate]);
   const [hourRange, setHourRange] = useState<[number, number]>([minMinute, 1440]);
   useEffect(() => {
     setHourRange([minMinute, 1440]);
@@ -234,7 +241,13 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
                 min={minMinute}
                 max={1440}
                 step={30}
-                label={defaultTimeRange === "today" ? "Uhrzeit heute" : "Uhrzeit morgen"}
+                label={
+                  defaultTimeRange === "today"
+                    ? "Uhrzeit heute"
+                    : defaultTimeRange === "tomorrow"
+                    ? "Uhrzeit morgen"
+                    : "Uhrzeit"
+                }
               />
             </section>
           )}
