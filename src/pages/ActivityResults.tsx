@@ -19,6 +19,7 @@ import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import type { SearchFilters } from "@/lib/types";
+import { TimeRangeSlider } from "@/components/TimeRangeSlider";
 
 interface ActivityResultsProps {
   defaultTimeRange: SearchFilters["timeRange"];
@@ -45,6 +46,18 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user } = useAuth();
 
+  // Time-of-day range slider (only used for "today" and "tomorrow")
+  const showTimeSlider = defaultTimeRange === "today" || defaultTimeRange === "tomorrow";
+  const minMinute = useMemo(() => {
+    if (defaultTimeRange !== "today") return 0;
+    const now = new Date();
+    return Math.floor((now.getHours() * 60 + now.getMinutes()) / 30) * 30;
+  }, [defaultTimeRange]);
+  const [hourRange, setHourRange] = useState<[number, number]>([minMinute, 1440]);
+  useEffect(() => {
+    setHourRange([minMinute, 1440]);
+  }, [minMinute, defaultTimeRange]);
+
 
   // Sync filters when route/defaultTimeRange or ?cd= changes (without remounting)
   useEffect(() => {
@@ -65,13 +78,24 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const activities = useMemo(() => {
     if (!rawActivities) return rawActivities;
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return rawActivities;
-    return rawActivities.filter((a) =>
-      [a.title, a.description, a.location_name, a.district]
-        .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(q))
-    );
-  }, [rawActivities, searchQuery]);
+    let list = rawActivities;
+    if (q) {
+      list = list.filter((a) =>
+        [a.title, a.description, a.location_name, a.district]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(q))
+      );
+    }
+    if (showTimeSlider) {
+      const [from, to] = hourRange;
+      list = list.filter((a) => {
+        const d = new Date(a.start_time);
+        const mins = d.getHours() * 60 + d.getMinutes();
+        return mins >= from && mins <= to;
+      });
+    }
+    return list;
+  }, [rawActivities, searchQuery, showTimeSlider, hourRange]);
 
   // For /jetzt, split into "already running" vs "starting soon"
   const { running, starting } = useMemo(() => {
@@ -200,6 +224,20 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
           <section>
             <FilterChips filters={filters} onChange={(f) => setFilters(f)} />
           </section>
+
+          {/* Time-of-day slider (Heute / Morgen) */}
+          {showTimeSlider && (
+            <section>
+              <TimeRangeSlider
+                value={hourRange}
+                onValueChange={setHourRange}
+                min={minMinute}
+                max={1440}
+                step={30}
+                label={defaultTimeRange === "today" ? "Uhrzeit heute" : "Uhrzeit morgen"}
+              />
+            </section>
+          )}
 
           {/* Search bar */}
           <section>
