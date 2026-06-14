@@ -78,13 +78,24 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const activities = useMemo(() => {
     if (!rawActivities) return rawActivities;
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return rawActivities;
-    return rawActivities.filter((a) =>
-      [a.title, a.description, a.location_name, a.district]
-        .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(q))
-    );
-  }, [rawActivities, searchQuery]);
+    let list = rawActivities;
+    if (q) {
+      list = list.filter((a) =>
+        [a.title, a.description, a.location_name, a.district]
+          .filter(Boolean)
+          .some((v) => String(v).toLowerCase().includes(q))
+      );
+    }
+    if (showTimeSlider) {
+      const [from, to] = hourRange;
+      list = list.filter((a) => {
+        const d = new Date(a.start_time);
+        const mins = d.getHours() * 60 + d.getMinutes();
+        return mins >= from && mins <= to;
+      });
+    }
+    return list;
+  }, [rawActivities, searchQuery, showTimeSlider, hourRange]);
 
   // For /jetzt, split into "already running" vs "starting soon"
   const { running, starting } = useMemo(() => {
