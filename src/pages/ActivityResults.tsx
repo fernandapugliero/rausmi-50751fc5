@@ -241,7 +241,13 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
                 min={minMinute}
                 max={1440}
                 step={30}
-                label={defaultTimeRange === "today" ? "Uhrzeit heute" : "Uhrzeit morgen"}
+                label={
+                  defaultTimeRange === "today"
+                    ? "Uhrzeit heute"
+                    : defaultTimeRange === "tomorrow"
+                    ? "Uhrzeit morgen"
+                    : "Uhrzeit"
+                }
               />
             </section>
           )}
