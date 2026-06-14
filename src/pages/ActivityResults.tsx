@@ -225,6 +225,20 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
             <FilterChips filters={filters} onChange={(f) => setFilters(f)} />
           </section>
 
+          {/* Time-of-day slider (Heute / Morgen) */}
+          {showTimeSlider && (
+            <section>
+              <TimeRangeSlider
+                value={hourRange}
+                onValueChange={setHourRange}
+                min={minMinute}
+                max={1440}
+                step={30}
+                label={defaultTimeRange === "today" ? "Uhrzeit heute" : "Uhrzeit morgen"}
+              />
+            </section>
+          )}
+
           {/* Search bar */}
           <section>
             <div className="relative">
