@@ -79,19 +79,13 @@ export async function setReportStatus(id: string, status: ReportStatus) {
   if (error) throw error;
 }
 
-/** Hides the underlying activity using crawler_overrides (event_key = base id without occurrence suffix) */
-export async function hideActivityViaOverride(activityId: string, note?: string) {
-  const baseKey = activityId.split("__")[0];
+/** Unpublishes the activity (sets is_approved=false). Crawler re-inserts as pending on next run, never auto-relive. */
+export async function hideActivityViaOverride(activityId: string, _note?: string) {
+  const baseId = activityId.split("__")[0];
   const { error } = await supabase
-    .from("crawler_overrides")
-    .upsert(
-      {
-        event_key: baseKey,
-        hidden: true,
-        notes: note ?? "Hidden via report",
-      },
-      { onConflict: "event_key" },
-    );
+    .from("activities")
+    .update({ is_approved: false })
+    .eq("id", baseId);
   if (error) throw error;
 }
 
