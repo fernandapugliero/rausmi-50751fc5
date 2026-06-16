@@ -186,17 +186,28 @@ const ActivityDetail = () => {
         )}
 
         {/* Source link */}
-        {activity.source_url && (
-          <a
-            href={activity.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:underline"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Originalquelle ansehen
-          </a>
-        )}
+        {activity.source_url && (() => {
+          const isPdf = /\.pdf(\?|#|$)/i.test(activity.source_url);
+          return (
+            <a
+              href={activity.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:underline"
+            >
+              {isPdf ? <FileText className="w-4 h-4" /> : <ExternalLink className="w-4 h-4" />}
+              {isPdf ? "Quelle als PDF öffnen" : "Originalquelle ansehen"}
+            </a>
+          );
+        })()}
+
+        {/* Report form */}
+        <ActivityReportForm
+          activityId={activity.id}
+          activityTitle={activity.title}
+          activitySourceUrl={activity.source_url}
+        />
+
 
         {/* Verified metadata */}
         {activity._verifiedAt && (
