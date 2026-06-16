@@ -1,11 +1,12 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark, Repeat, Star, CheckCircle } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark, Repeat, Star, CheckCircle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchAllActivities } from "@/lib/activity-queries";
 import { formatActivityTime, getRelativeTimeLabel, getAgeLabel, getRecurringDayLabel } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
+import { ActivityReportForm } from "@/components/ActivityReportForm";
 
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
