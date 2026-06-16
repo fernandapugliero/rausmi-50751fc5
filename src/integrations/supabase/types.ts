@@ -137,6 +137,54 @@ export type Database = {
           },
         ]
       }
+      activity_reports: {
+        Row: {
+          activity_id: string
+          activity_source_url: string | null
+          activity_title: string | null
+          comment: string | null
+          created_at: string
+          id: string
+          issues: string[]
+          reporter_role: string
+          reporter_user_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          activity_id: string
+          activity_source_url?: string | null
+          activity_title?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          issues?: string[]
+          reporter_role: string
+          reporter_user_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          activity_id?: string
+          activity_source_url?: string | null
+          activity_title?: string | null
+          comment?: string | null
+          created_at?: string
+          id?: string
+          issues?: string[]
+          reporter_role?: string
+          reporter_user_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crawler_overrides: {
         Row: {
           age_override: string | null

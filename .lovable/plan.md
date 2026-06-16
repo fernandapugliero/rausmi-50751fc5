@@ -1,115 +1,87 @@
-## Objetivo
+## Contexto importante antes do plano
 
-Substituir a digitação manual de atividades por um pipeline semi-automatizado:
-**Site/PDF do Familienzentrum → IA extrai → você revisa em 1 tela → publica**.
+As atividades exibidas no site **não vêm da tabela `activities` do banco** — elas vêm do `data.json` no GitHub (apenas community submissions vão para a tabela). Por isso "reaprovar tudo agora" no sentido de marcar `is_approved=false` não funciona para o conteúdo que você está vendo problemático.
 
-Você nunca digita do zero. Só clica "aprovar", "editar" ou "rejeitar".
+Boa notícia: já existe a tabela `crawler_overrides` com campo `hidden` por `event_key`. É o mecanismo certo para ocultar atividades específicas vindas do JSON. O plano abaixo usa isso e conecta com os reports.
 
----
-
-## Como vai funcionar (visão da Fernanda)
-
-1. Você acessa `/admin/quellen` (Fontes)
-2. Cadastra 1x cada Familienzentrum:
-   - Nome (ex: "FaNN")
-   - URL do site (ex: `http://www.fann-berlin.de/`)
-   - Bairro, endereço, geo (preenchidos 1x)
-   - (Opcional) URLs extras: PDF do programa mensal, newsletter, página de Instagram
-3. Toda segunda 8h um job automático roda: pra cada fonte, baixa o conteúdo e manda pra IA
-4. IA devolve uma lista estruturada de atividades + exceções
-5. Você abre `/admin/revisao` e vê uma fila tipo Tinder:
-   - ✅ Aprovar (publica)
-   - ✏️ Editar e aprovar
-   - ❌ Rejeitar
-   - 🔁 "Já existe" (mescla com versão atual)
-6. Atividades aprovadas vão pra base `activities` e aparecem no site nas seções Jetzt/Heute/Morgen
-
-**Tempo seu estimado:** 15–30 min/semana pra revisar 50 centros (vs. ~10h pra digitar tudo manualmente)
+PDF como fonte: hoje o link "Originalquelle ansehen" abre `source_url` em nova aba sem distinção. Vou detectar `.pdf` e mostrar "PDF öffnen" com ícone de documento.
 
 ---
 
-## Arquitetura técnica
+## 1. Formulário de report na página da atividade
 
-```text
-┌──────────────────┐
-│ sources (DB)     │  ← você cadastra venues 1x
-│  - url, venue,   │
-│    geo, bairro   │
-└────────┬─────────┘
-         │ cron semanal
-         ▼
-┌──────────────────┐
-│ Edge function:   │
-│ extract-source   │  ← baixa HTML/PDF + chama Gemini
-└────────┬─────────┘
-         │
-         ▼
-┌──────────────────┐
-│ extractions (DB) │  ← saída bruta da IA, status=pending
-│  + diff vs. atual│
-└────────┬─────────┘
-         │ você revisa em /admin/revisao
-         ▼
-┌──────────────────┐
-│ activities (DB)  │  ← versão publicada (já existe)
-└────────┬─────────┘
-         │
-         ▼
-   Site público (Jetzt/Heute/Morgen)
+Novo componente `ActivityReportForm.tsx` inserido em `ActivityDetail.tsx`, dentro de um `<details>` colapsável estilo nativo com o design do site (chevron animado, bordas suaves).
+
+**Header colapsável:** "Etwas zu dieser Aktivität melden" + chevron.
+
+**Conteúdo (visível só quando aberto):**
+- Radio: **Ich bin Besucher:in** / **Ich bin Veranstalter:in**
+- Checkboxes (multi-select) com 4 opções pré-definidas + "Sonstiges":
+  - Aktivität hat verspätet begonnen
+  - Aktivität hat nicht stattgefunden
+  - Aktivität existiert nicht mehr
+  - Informationen sind falsch
+  - Sonstiges
+- Textarea opcional para comentário livre (max 1000 chars, validação zod)
+- Botão "Melden"
+
+**Auth obrigatório:** se usuário não logado, mostrar mensagem "Bitte melde dich an, um etwas zu melden" + botão que abre o `AuthDialog`. Após login, form aparece.
+
+Após submit: toast "Danke für dein Feedback!" e fecha o details.
+
+## 2. Tabela `activity_reports` (migration)
+
+```
+activity_reports
+  id uuid pk
+  activity_id text            -- aceita ID composto (uuid__timestamp)
+  activity_title text          -- snapshot (atividade pode sumir do JSON)
+  activity_source_url text     -- snapshot
+  reporter_user_id uuid → auth.users (NOT NULL)
+  reporter_role text           -- 'visitor' | 'organizer'
+  issues text[]                -- ex: ['late','did_not_happen',...]
+  comment text
+  status text default 'open'   -- 'open' | 'resolved' | 'dismissed'
+  resolved_by uuid
+  resolved_at timestamptz
+  created_at, updated_at
 ```
 
-### Mudanças no app
-- **Aposentar** `data.json` no GitHub e o `crawler_overrides` (decisão já tomada)
-- `activities` vira a única fonte de verdade
-- `src/lib/airtable.ts` → renomear pra `src/lib/activities.ts` e ler do Supabase
-- Recorrência (`weekly`, `monthly Nth weekday`, `once`) já está modelada — mantemos
+RLS:
+- `INSERT`: usuário autenticado pode criar com `reporter_user_id = auth.uid()`
+- `SELECT/UPDATE/DELETE`: apenas admins (`has_role`)
+- GRANTs apropriados (`authenticated` insert, `service_role` all)
 
-### Novas tabelas
-- `sources` — Familienzentren cadastrados (URL + metadata fixa)
-- `extractions` — output da IA, status: pending / approved / rejected / merged
-- `source_runs` — log de cada execução (pra debug e custo)
+## 3. Aba "Reports" no Admin
 
-### Novas edge functions
-- `extract-source` — recebe `source_id`, busca conteúdo, chama Gemini com tool calling, salva extractions
-- `run-weekly-extractions` — chamada pelo cron, dispara `extract-source` pra todas as fontes ativas
-- (Opcional) `notify-pending-review` — manda email pra fixmydiaper@gmail.com toda segunda dizendo "X novas extrações pra revisar"
+Nova tab em `src/pages/Admin.tsx` (`tab: "reports"`) com:
+- Lista cards ordenados por `created_at desc`
+- Filtro: Open / Resolved / Dismissed
+- Cada card mostra: título da atividade (link para `/activity/:id`), reporter role, issues como chips, comentário, data, email do reporter
+- Ações por report:
+  - **Aktivität ausblenden** → upsert em `crawler_overrides` com `hidden=true` usando o ID base (sem `__suffix`) como `event_key`, e marca report como `resolved`
+  - **Erledigt** → marca `resolved`
+  - **Verwerfen** → marca `dismissed`
 
-### IA
-- **Lovable AI Gateway** (sem API key extra), modelo **google/gemini-3-flash-preview**
-- Tool calling com schema estruturado (atividade, exceção, evento único)
-- Custo: ~€0,001 por fonte → €0,05/semana pra 50 fontes
-- Cabe folgado no plano free do Lovable AI
+## 4. Limpeza one-time (resposta honesta)
 
-### Cron
-- `pg_cron` + `pg_net` no Supabase, todo domingo 22h
+Não vou marcar atividades como pending porque elas não estão no banco. Em vez disso, o fluxo prático fica:
+- Reports chegam → você abre a aba Reports → 1 clique para ocultar via crawler_overrides
+- Para os casos atuais que você já viu (não-infantis, anmeldung errado), a melhor abordagem é você mesmo enviar reports ou eu adicionar um botão "Ocultar" direto no card de atividade da aba "Freigegeben"/"Crawler-Daten". Já existe `CrawlerOverridesAdmin` para gerenciar manualmente — posso adicionar busca/filtro lá se quiser, mas isso fica fora deste plano.
 
----
+## 5. PDF detection na página de detalhe
 
-## Telas novas no admin
-
-1. **`/admin/quellen`** — lista de fontes (Familienzentren), botão "Adicionar fonte" e "Rodar agora"
-2. **`/admin/revisao`** — fila de extrações pending com diff visual (verde = nova, amarelo = mudou, vermelho = removida)
+Em `ActivityDetail.tsx`, detectar se `source_url` termina em `.pdf` (ou contém `.pdf?`) e renderizar "PDF öffnen" com ícone `FileText` em vez de "Originalquelle ansehen" com `ExternalLink`.
 
 ---
 
-## Fora do escopo desta fase
+## Arquivos afetados
 
-- Formulário público "envie sua atividade" — fica desativado por enquanto (você decide depois se reativa)
-- Integração com Airtable — vamos com Lovable Cloud como banco principal (já tá conectado, sem novo serviço pra manter)
-- Login dos próprios Familienzentren (opção 1 da conversa anterior) — fica pra v2
+- **Migration nova** — tabela `activity_reports` + RLS + GRANTs + trigger updated_at
+- **Novo** `src/components/ActivityReportForm.tsx`
+- **Edit** `src/pages/ActivityDetail.tsx` — adicionar form + PDF detection
+- **Novo** `src/components/ReportsAdmin.tsx`
+- **Edit** `src/pages/Admin.tsx` — nova aba "Reports"
+- **Novo** `src/lib/reports.ts` — helpers de insert/list/resolve
 
----
-
-## Riscos e mitigações
-
-- **IA inventa horário** → tool calling com schema rígido + você revisa antes de publicar
-- **Site do centro muda layout** → o cron loga sucesso/falha; se 0 extrações sair, marco a fonte como "needs attention"
-- **PDF complicado** → suportamos PDF via parser do próprio Gemini (multimodal); se falhar, você atualiza manualmente daquela fonte
-
----
-
-## Pra confirmar antes de eu começar
-
-1. **Começamos com quantas fontes piloto?** Sugiro 3–5 Familienzentren em 1–2 bairros pra validar antes de escalar.
-2. **Tudo bem aposentar `data.json` e `crawler_overrides` já nessa fase** ou prefere manter como backup até a nova base estar populada?
-3. **Notificação por email às segundas com link "X coisas pra revisar"** — quer agora ou só depois?
+Confirma para eu seguir?
