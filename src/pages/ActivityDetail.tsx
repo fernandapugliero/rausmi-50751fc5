@@ -7,6 +7,8 @@ import { formatActivityTime, getRelativeTimeLabel, getAgeLabel, getRecurringDayL
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { ActivityReportForm } from "@/components/ActivityReportForm";
+import { ActivityReviewForm } from "@/components/ActivityReviewForm";
+import { ActivityReviewsList } from "@/components/ActivityReviewsList";
 
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -201,12 +203,23 @@ const ActivityDetail = () => {
           );
         })()}
 
+        {/* Reviews list */}
+        <ActivityReviewsList activityId={activity.id} />
+
+        {/* Review form */}
+        <ActivityReviewForm
+          activityId={activity.id}
+          activityTitle={activity.title}
+        />
+
         {/* Report form */}
         <ActivityReportForm
           activityId={activity.id}
           activityTitle={activity.title}
           activitySourceUrl={activity.source_url}
         />
+
+
 
 
         {/* Verified metadata */}

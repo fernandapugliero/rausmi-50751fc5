@@ -185,6 +185,42 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_reviews: {
+        Row: {
+          activity_id: string
+          activity_title: string | null
+          comment: string
+          created_at: string
+          display_name: string | null
+          id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          activity_title?: string | null
+          comment: string
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          activity_title?: string | null
+          comment?: string
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       crawler_overrides: {
         Row: {
           age_override: string | null
