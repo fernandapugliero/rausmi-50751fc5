@@ -84,7 +84,7 @@ const KindercafeEinreichen = () => {
 
       if (photoFile) {
         const ext = photoFile.name.split(".").pop();
-        const path = `${crypto.randomUUID()}.${ext}`;
+        const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
         const { error: uploadErr } = await supabase.storage
           .from("kindercafe-photos")
           .upload(path, photoFile);
