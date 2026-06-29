@@ -59,6 +59,7 @@ export function NewsletterSignup() {
         .insert({
           email: email.trim().toLowerCase(),
           districts: selectedDistricts,
+          is_active: false,
         });
 
       if (error) {

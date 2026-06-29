@@ -325,6 +325,8 @@ export type Database = {
       }
       newsletter_subscribers: {
         Row: {
+          confirmation_token: string | null
+          confirmed_at: string | null
           created_at: string
           district: Database["public"]["Enums"]["berlin_district"] | null
           districts: string[]
@@ -334,6 +336,8 @@ export type Database = {
           unsubscribed_at: string | null
         }
         Insert: {
+          confirmation_token?: string | null
+          confirmed_at?: string | null
           created_at?: string
           district?: Database["public"]["Enums"]["berlin_district"] | null
           districts?: string[]
@@ -343,6 +347,8 @@ export type Database = {
           unsubscribed_at?: string | null
         }
         Update: {
+          confirmation_token?: string | null
+          confirmed_at?: string | null
           created_at?: string
           district?: Database["public"]["Enums"]["berlin_district"] | null
           districts?: string[]
