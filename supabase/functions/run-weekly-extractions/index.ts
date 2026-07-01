@@ -10,6 +10,49 @@ Deno.serve(async (req) => {
 
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
   const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  const CRON_SECRET = Deno.env.get("CRON_SECRET");
+
+  // Authenticate caller: either a valid CRON_SECRET header (for the scheduler)
+  // or an authenticated admin user (for manual triggering from the app).
+  const providedSecret =
+    req.headers.get("x-cron-secret") ??
+    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+
+  let authorized = !!(CRON_SECRET && providedSecret && providedSecret === CRON_SECRET);
+
+  if (!authorized) {
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const userClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY")!, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const token = authHeader.replace("Bearer ", "");
+        const { data: claimsData } = await userClient.auth.getClaims(token);
+        const uid = claimsData?.claims?.sub;
+        if (uid) {
+          const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+          const { data: roleRow } = await admin
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", uid)
+            .eq("role", "admin")
+            .maybeSingle();
+          authorized = !!roleRow;
+        }
+      } catch (_) {
+        // fall through to 401
+      }
+    }
+  }
+
+  if (!authorized) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
   const { data: sources, error } = await supabase
