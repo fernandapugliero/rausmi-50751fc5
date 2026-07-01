@@ -45,10 +45,7 @@ const Admin = () => {
   const { data: activities, isLoading } = useQuery({
     queryKey: ["admin-activities"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.rpc("admin_list_activities");
       if (error) throw error;
       return data;
     },
