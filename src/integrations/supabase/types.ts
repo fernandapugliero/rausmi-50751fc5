@@ -543,7 +543,50 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_list_activities: {
+        Args: never
+        Returns: {
+          address: string | null
+          age_groups: Database["public"]["Enums"]["baby_age_group"][]
+          category: string | null
+          created_at: string
+          description: string | null
+          district: Database["public"]["Enums"]["berlin_district"]
+          duplicate_of_activity_id: string | null
+          end_time: string | null
+          external_key: string | null
+          id: string
+          image_url: string | null
+          is_approved: boolean
+          is_free: boolean
+          last_seen_at: string | null
+          latitude: number | null
+          location_name: string
+          longitude: number | null
+          pause_from: string | null
+          pause_until: string | null
+          price_info: string | null
+          recurrence_rule: string | null
+          recurring: boolean | null
+          registration_required: boolean
+          registration_url: string | null
+          source: string | null
+          source_id: string | null
+          source_url: string | null
+          start_time: string
+          submitted_by: string | null
+          submitter_email: string | null
+          submitter_name: string | null
+          title: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "activities"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
     }
     Enums: {
       app_role: "admin" | "user"
