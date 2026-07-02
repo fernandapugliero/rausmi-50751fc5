@@ -39,7 +39,25 @@ const Index = () => {
               <span>Rausmi</span>
             </div>
           </Link>
-...
+          {user ? (
+            <Link
+              to="/konto"
+              className="text-sm text-primary font-semibold hover:underline transition-colors"
+            >
+              Mein Konto
+            </Link>
+          ) : (
+            <button
+              onClick={() => setShowAuthDialog(true)}
+              className="text-sm text-primary font-semibold hover:underline transition-colors"
+            >
+              Anmelden
+            </button>
+          )}
+        </header>
+
+        <div className="px-5 space-y-8 max-w-3xl mx-auto">
+          {/* Hero */}
           <section className="pt-6 pb-2 text-center space-y-2">
             <h1 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
               Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin<span className="text-primary align-super text-2xl">*</span> machen kannst.
