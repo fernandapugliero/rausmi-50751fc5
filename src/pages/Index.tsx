@@ -2,7 +2,7 @@ import { useState } from "react";
 import fixmydiaperMap from "@/assets/rausmi-fmd-map-20260702.jpg.asset.json";
 import { SEO } from "@/components/SEO";
 import { Footer } from "@/components/Footer";
-import { Bookmark, Plus, ArrowUpRight } from "lucide-react";
+import { Bookmark, Plus, ArrowUpRight, BookOpen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { QuickActions } from "@/components/QuickActions";
 import { KindercafeCarousel } from "@/components/KindercafeCarousel";
@@ -10,7 +10,10 @@ import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import type { SearchFilters } from "@/lib/types";
+
 
 
 const Index = () => {
@@ -66,7 +69,9 @@ const Index = () => {
               <span className="font-semibold uppercase tracking-wide text-[11px] text-primary/80 mr-1.5">Beta</span>
               *aktuell nur in Neukölln verfügbar
             </p>
+            <ActivityCounter />
           </section>
+
 
 
 
@@ -197,12 +202,33 @@ const Index = () => {
             </a>
           </section>
 
-
+          {/* Magazin teaser */}
+          <section>
+            <Link
+              to="/magazin"
+              className="group flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-5 shadow-sm transition-all hover:shadow-md hover:border-primary/40"
+            >
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <BookOpen className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-bold tracking-widest uppercase text-primary">Neu · Magazin</p>
+                <h3 className="font-display font-bold text-base text-card-foreground mt-1">
+                  Was tun, wenn's regnet?
+                </h3>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  Ideen für Regentage mit Kindern in Berlin.
+                </p>
+              </div>
+              <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+            </Link>
+          </section>
 
 
           {/* Newsletter signup */}
           <NewsletterSignup />
         </div>
+
         <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
       </div>
       <Footer />
