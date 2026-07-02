@@ -92,8 +92,9 @@ export function NewsletterSignup() {
               Du bist angemeldet!
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Ab morgen bekommst du jeden Morgen 5 Ideen für den Tag.
+              Sobald wir starten, bist du eine der Ersten, die den Newsletter bekommt.
             </p>
+
           </div>
         </div>
       </section>
