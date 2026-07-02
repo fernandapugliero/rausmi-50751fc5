@@ -220,7 +220,7 @@ const KindercafeDetail = () => {
       </div>
 
       {/* Sticky CTA */}
-      {mapsUrl && (
+      {mapsUrl && !isClosed && (
         <div className="fixed bottom-0 inset-x-0 px-5 pb-5 pt-4 bg-gradient-to-t from-background via-background to-transparent z-20">
           <div className="max-w-3xl mx-auto">
             <a
