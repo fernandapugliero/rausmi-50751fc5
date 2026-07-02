@@ -97,6 +97,20 @@ export const SourcesAdmin = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-sources"] }),
   });
 
+  const toggleMode = useMutation({
+    mutationFn: async ({ id, crawl_mode }: { id: string; crawl_mode: "auto" | "manual" }) => {
+      const { error } = await supabase
+        .from("sources")
+        .update({ crawl_mode })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Crawl-Modus aktualisiert");
+      qc.invalidateQueries({ queryKey: ["admin-sources"] });
+    },
+  });
+
   const deleteSource = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("sources").delete().eq("id", id);
@@ -140,6 +154,28 @@ export const SourcesAdmin = () => {
         <div className="space-y-3">
           {sources.map((s) => {
             const latest = runsBySource?.[s.id];
+            const isManual = (s as { crawl_mode?: string }).crawl_mode === "manual";
+            // Health: green if success within 10d, red if failed, amber otherwise (empty / never / manual)
+            const ageDays = latest ? (Date.now() - new Date(latest.started_at).getTime()) / 86400000 : Infinity;
+            const health: "green" | "amber" | "red" | "gray" = isManual
+              ? "gray"
+              : latest?.status === "success" && ageDays < 10
+                ? "green"
+                : latest?.status === "failed"
+                  ? "red"
+                  : "amber";
+            const healthColor = {
+              green: "bg-emerald-500",
+              amber: "bg-amber-500",
+              red: "bg-red-500",
+              gray: "bg-muted-foreground/40",
+            }[health];
+            const healthTitle = {
+              green: "Läuft — letzte Extraktion erfolgreich",
+              amber: latest?.status === "empty" ? "Keine Aktivitäten gefunden" : "Noch nie gelaufen oder veraltet",
+              red: "Letzter Lauf fehlgeschlagen",
+              gray: "Manueller Modus — kein Auto-Crawl",
+            }[health];
             return (
               <div
                 key={s.id}
@@ -147,11 +183,17 @@ export const SourcesAdmin = () => {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-display font-semibold text-sm flex items-center gap-2">
+                    <h3 className="font-display font-semibold text-sm flex items-center gap-2 flex-wrap">
+                      <span className={`w-2.5 h-2.5 rounded-full ${healthColor} shrink-0`} title={healthTitle} />
                       {s.name}
                       {!s.is_active && (
                         <Badge variant="outline" className="text-[10px]">
                           inaktiv
+                        </Badge>
+                      )}
+                      {isManual && (
+                        <Badge variant="outline" className="text-[10px] border-primary/40 text-primary bg-primary/5">
+                          manuell
                         </Badge>
                       )}
                     </h3>
@@ -202,6 +244,7 @@ export const SourcesAdmin = () => {
                     className="rounded-full gap-1.5"
                     onClick={() => runExtraction(s.id)}
                     disabled={running === s.id}
+                    title="KI-Extraktion sofort auslösen (auch wenn Inhalt unverändert)"
                   >
                     {running === s.id ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -214,7 +257,26 @@ export const SourcesAdmin = () => {
                     variant="outline"
                     size="sm"
                     className="rounded-full gap-1.5"
+                    onClick={() =>
+                      toggleMode.mutate({
+                        id: s.id,
+                        crawl_mode: isManual ? "auto" : "manual",
+                      })
+                    }
+                    title={
+                      isManual
+                        ? "Auf Auto stellen — Quelle wird wöchentlich gecrawlt"
+                        : "Auf Manuell stellen — Quelle wird beim wöchentlichen Cron übersprungen"
+                    }
+                  >
+                    {isManual ? "→ Auto" : "→ Manuell"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full gap-1.5"
                     onClick={() => toggleActive.mutate({ id: s.id, is_active: !s.is_active })}
+                    title={s.is_active ? "Quelle komplett pausieren" : "Quelle wieder aktivieren"}
                   >
                     <Power className="w-3.5 h-3.5" />
                     {s.is_active ? "Deaktivieren" : "Aktivieren"}
@@ -226,6 +288,7 @@ export const SourcesAdmin = () => {
                     onClick={() => {
                       if (confirm(`Quelle "${s.name}" löschen?`)) deleteSource.mutate(s.id);
                     }}
+                    title="Quelle unwiderruflich löschen (Aktivitäten bleiben bestehen)"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Löschen

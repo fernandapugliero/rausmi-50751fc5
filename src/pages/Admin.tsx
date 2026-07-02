@@ -13,6 +13,7 @@ import { CrawlerOverridesAdmin } from "@/components/CrawlerOverridesAdmin";
 import { SourcesAdmin } from "@/components/SourcesAdmin";
 import { ReportsAdmin } from "@/components/ReportsAdmin";
 import { NewsletterAdmin } from "@/components/NewsletterAdmin";
+import { AdminStatusCard } from "@/components/AdminStatusCard";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -144,12 +145,15 @@ const Admin = () => {
       </header>
 
       <div className="px-5 py-4 space-y-4">
+        <AdminStatusCard />
+
         <div className="flex gap-2 flex-wrap">
           <Button
             variant={tab === "pending" ? "default" : "outline"}
             size="sm"
             className="rounded-full gap-1.5"
             onClick={() => setTab("pending")}
+            title="Community-Einreichungen und neu gecrawlte Events, die noch freigegeben werden müssen"
           >
             <EyeOff className="w-3.5 h-3.5" />
             Ausstehend
@@ -159,6 +163,7 @@ const Admin = () => {
             size="sm"
             className="rounded-full gap-1.5"
             onClick={() => setTab("approved")}
+            title="Alle live geschalteten Aktivitäten"
           >
             <Eye className="w-3.5 h-3.5" />
             Freigegeben
@@ -168,6 +173,7 @@ const Admin = () => {
             size="sm"
             className="rounded-full gap-1.5"
             onClick={() => setTab("sources")}
+            title="Webseiten, die vom Crawler wöchentlich ausgelesen werden"
           >
             <Database className="w-3.5 h-3.5" />
             Quellen
@@ -177,6 +183,7 @@ const Admin = () => {
             size="sm"
             className="rounded-full gap-1.5"
             onClick={() => setTab("crawler")}
+            title="Feste Werte (Bild, Preis, Alter), die für Aktivitäten einer Quelle immer gelten sollen"
           >
             <Settings className="w-3.5 h-3.5" />
             Crawler-Daten
@@ -186,6 +193,7 @@ const Admin = () => {
             size="sm"
             className="rounded-full gap-1.5"
             onClick={() => setTab("reports")}
+            title="Von Nutzer:innen gemeldete Probleme mit Aktivitäten"
           >
             <Flag className="w-3.5 h-3.5" />
             Reports
@@ -195,6 +203,7 @@ const Admin = () => {
             size="sm"
             className="rounded-full gap-1.5"
             onClick={() => setTab("newsletter")}
+            title="Newsletter-Anmeldungen (CSV-Export verfügbar)"
           >
             <Mail className="w-3.5 h-3.5" />
             Newsletter
