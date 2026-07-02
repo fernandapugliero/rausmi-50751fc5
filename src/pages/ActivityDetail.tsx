@@ -64,15 +64,14 @@ const ActivityDetail = () => {
   return (
     <div className="min-h-screen pb-10">
       {/* Top bar */}
-      <header className="px-5 pt-6 pb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="rounded-full -ml-2" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <Link to="/" className="font-display font-semibold text-sm text-muted-foreground hover:text-primary transition-colors">
-            🟠 Rausmi
-          </Link>
-        </div>
+      <header className="px-5 pt-8 pb-4 flex items-center justify-between">
+        <Link
+          to="/"
+          className="font-display font-bold text-2xl tracking-tight text-foreground flex items-center gap-1.5"
+        >
+          <span>🟠</span>
+          <span>Rausmi</span>
+        </Link>
         <button
           onClick={() => toggle(activity.id)}
           className={`flex items-center gap-1.5 text-sm font-semibold rounded-full px-3 py-2 transition-all ${
