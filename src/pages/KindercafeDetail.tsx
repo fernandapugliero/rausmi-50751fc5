@@ -132,6 +132,20 @@ const KindercafeDetail = () => {
           </p>
         )}
 
+        {isClosed && (
+          <div className="rounded-2xl border border-black/10 bg-black/5 p-4 flex items-start gap-3">
+            <div className="w-9 h-9 shrink-0 rounded-full bg-black/10 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4 text-foreground" />
+            </div>
+            <div>
+              <div className="font-semibold text-sm">Vorübergehend geschlossen</div>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Dieses Café ist aktuell nicht geöffnet. Bitte prüfe vor einem Besuch die Website oder Social-Media-Kanäle des Betriebs.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Info */}
         <div className="grid gap-2">
           {cafe.address && (
