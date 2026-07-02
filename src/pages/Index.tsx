@@ -174,7 +174,7 @@ const Index = () => {
                   Hast du Wickel gesagt?
                 </h3>
                 <p className="mt-1.5 text-sm text-muted-foreground leading-snug">
-                  Wickeltische in deiner Nähe.
+                  Finde Wickeltische in deiner Nähe.
                 </p>
               </div>
 
