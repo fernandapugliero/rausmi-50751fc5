@@ -147,83 +147,75 @@ const Index = () => {
             </button>
           </section>
 
-          {/* Ad banner: FixMyDiaper — inspired by their real brand (safety-pin logo, blue map pins) */}
+          {/* Ad banner: FixMyDiaper — minimal card with pulsing blue map pins */}
           <section>
             <a
               href="https://fixmydiaper.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative block overflow-hidden rounded-3xl border border-border/60 bg-card hover:shadow-lg transition-all"
+              className="group relative flex h-[150px] w-full overflow-hidden rounded-[2rem] border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg active:scale-[0.98]"
             >
-              <div className="flex items-stretch">
-                {/* Left: brand + copy */}
-                <div className="flex-1 min-w-0 p-5 pr-3">
-                  <div className="flex items-center gap-2 mb-3">
-                    {/* Safety-pin icon (FixMyDiaper logo mark) */}
-                    <svg viewBox="0 0 24 24" className="w-4 h-4 text-foreground" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M5 15 L18 4 a2.5 2.5 0 0 1 3.5 3.5 L9 20 a3 3 0 1 1 -4.2 -4.2 Z" />
-                      <circle cx="6.2" cy="17.8" r="1.6" />
-                    </svg>
-                    <span className="text-[9px] font-bold tracking-[0.18em] uppercase text-muted-foreground">
-                      Anzeige · FixMyDiaper
-                    </span>
-                  </div>
-                  <h3 className="font-display font-bold text-[17px] leading-tight text-foreground">
+              {/* Content */}
+              <div className="flex flex-1 flex-col justify-between p-5">
+                <div>
+                  <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Anzeige · FixMyDiaper
+                  </span>
+                  <h3 className="font-display text-lg font-bold leading-tight text-foreground">
                     Wickeltisch gesucht?
                   </h3>
-                  <p className="text-xs text-muted-foreground mt-1.5 leading-snug">
-                    Babyfreundliche Orte mit Wickeltisch in deiner Nähe.
+                  <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">
+                    Babyfreundliche Orte in deiner Nähe.
                   </p>
-                  <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-foreground">
-                    Karte öffnen
-                    <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </span>
                 </div>
 
-                {/* Right: mini OSM-style map with blue pins */}
-                <div className="relative w-[42%] shrink-0 bg-[#e8ecd8] overflow-hidden">
-                  {/* faux streets */}
-                  <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full" aria-hidden="true">
-                    <rect width="200" height="200" fill="#eef2df" />
-                    {/* park */}
-                    <path d="M115 120 h55 v50 h-55 z" fill="#cfe3b8" />
-                    {/* water */}
-                    <path d="M-10 150 Q40 130 90 155 T210 150 L210 210 L-10 210 Z" fill="#bfd9ea" />
-                    {/* roads */}
-                    <g stroke="#ffffff" strokeWidth="6" strokeLinecap="round">
-                      <line x1="-10" y1="60" x2="210" y2="80" />
-                      <line x1="30" y1="-10" x2="70" y2="210" />
-                      <line x1="140" y1="-10" x2="120" y2="210" />
-                    </g>
-                    <g stroke="#f6c76a" strokeWidth="2.5" strokeLinecap="round">
-                      <line x1="-10" y1="60" x2="210" y2="80" />
-                      <line x1="30" y1="-10" x2="70" y2="210" />
-                    </g>
+                <div className="flex items-center gap-2">
+                  <div className="rounded-full bg-foreground px-4 py-2 text-[11px] font-bold text-background">
+                    Karte öffnen
+                  </div>
+                  {/* Safety-pin logo mark */}
+                  <svg viewBox="0 0 24 24" className="h-5 w-5 text-foreground" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 15 L18 4 a2.5 2.5 0 0 1 3.5 3.5 L9 20 a3 3 0 1 1 -4.2 -4.2 Z" />
+                    <circle cx="6.2" cy="17.8" r="1.6" />
                   </svg>
-                  {/* blue map pins — matching fixmydiaper.com */}
-                  {[
-                    { x: "22%", y: "38%" },
-                    { x: "58%", y: "28%" },
-                    { x: "44%", y: "62%" },
-                    { x: "74%", y: "56%" },
-                    { x: "30%", y: "76%" },
-                  ].map((p, i) => (
-                    <MapPin
-                      key={i}
-                      className="absolute w-5 h-5 -translate-x-1/2 -translate-y-full drop-shadow"
-                      style={{ left: p.x, top: p.y, color: "#2f7fd1", fill: "#2f7fd1" }}
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
-                  ))}
-                  {/* highlighted pin */}
-                  <MapPin
-                    className="absolute w-7 h-7 -translate-x-1/2 -translate-y-full"
-                    style={{ left: "50%", top: "48%", color: "#1d4ed8", fill: "#3b82f6" }}
-                    strokeWidth={1.5}
+                </div>
+              </div>
+
+              {/* Map graphic */}
+              <div className="relative w-[130px] shrink-0 overflow-hidden bg-muted/40">
+                {/* subtle grid */}
+                <svg className="absolute inset-0 h-full w-full opacity-20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <defs>
+                    <pattern id="fmd-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" />
+                    </pattern>
+                  </defs>
+                  <rect width="100%" height="100%" fill="url(#fmd-grid)" />
+                </svg>
+
+                {/* pulsing blue pins */}
+                {[
+                  { x: "32%", y: "26%", size: "h-2.5 w-2.5", delay: "0s" },
+                  { x: "72%", y: "48%", size: "h-3 w-3", delay: "0.4s" },
+                  { x: "48%", y: "74%", size: "h-2 w-2", delay: "0.8s" },
+                  { x: "68%", y: "30%", size: "h-2.5 w-2.5", delay: "1.2s" },
+                ].map((p, i) => (
+                  <span
+                    key={i}
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white ${p.size}`}
+                    style={{
+                      left: p.x,
+                      top: p.y,
+                      backgroundColor: "#3b82f6",
+                      boxShadow: "0 0 10px rgba(59,130,246,0.55)",
+                      animation: `pulse 2.4s cubic-bezier(0.4,0,0.6,1) ${p.delay} infinite`,
+                    }}
                     aria-hidden="true"
                   />
-                </div>
+                ))}
+
+                {/* soft blend into card */}
+                <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-card to-transparent" />
               </div>
             </a>
           </section>
