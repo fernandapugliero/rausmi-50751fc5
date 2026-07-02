@@ -101,7 +101,7 @@ export const AdminStatusCard = () => {
           tone={data.openReports > 0 ? "red" : "gray"}
           icon={<AlertTriangle className="w-3.5 h-3.5" />}
         />
-        <Stat label="Versteckt" value={data.hidden} tone="gray" icon={<Activity className="w-3.5 h-3.5" />} />
+        <Stat label="Quellen aktiv" value={data.autoSources} tone="gray" icon={<Activity className="w-3.5 h-3.5" />} />
       </div>
 
       <div className="border-t border-border/50 pt-2 text-[11px] text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
