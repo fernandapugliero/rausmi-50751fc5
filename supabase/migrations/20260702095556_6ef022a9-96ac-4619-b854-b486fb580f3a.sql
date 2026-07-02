@@ -1,0 +1,1 @@
+ALTER TABLE public.sources ADD COLUMN IF NOT EXISTS crawl_mode text NOT NULL DEFAULT 'auto' CHECK (crawl_mode IN ('auto','manual'));
