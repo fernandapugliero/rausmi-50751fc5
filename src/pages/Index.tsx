@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Footer } from "@/components/Footer";
-import { Bookmark, Plus, ArrowUpRight, MapPin } from "lucide-react";
+import { Bookmark, Plus, ArrowUpRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { QuickActions } from "@/components/QuickActions";
 import { KindercafeCarousel } from "@/components/KindercafeCarousel";
