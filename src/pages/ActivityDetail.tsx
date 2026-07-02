@@ -9,6 +9,7 @@ import { AuthDialog } from "@/components/AuthDialog";
 import { ActivityReportForm } from "@/components/ActivityReportForm";
 import { ActivityReviewForm } from "@/components/ActivityReviewForm";
 import { ActivityReviewsList } from "@/components/ActivityReviewsList";
+import { SEO } from "@/components/SEO";
 
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,9 +62,48 @@ const ActivityDetail = () => {
       ? activity.age_groups.map(getAgeLabel).join(", ")
       : null);
 
+  const eventJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: activity.title,
+    description: activity.description || `${activity.title} in ${activity.district}, Berlin.`,
+    startDate: activity.start_time,
+    ...(activity.end_time ? { endDate: activity.end_time } : {}),
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    location: {
+      "@type": "Place",
+      name: activity.location_name,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: activity.address || undefined,
+        addressLocality: activity.district || "Berlin",
+        addressRegion: "Berlin",
+        addressCountry: "DE",
+      },
+    },
+    ...(activity.is_free
+      ? { offers: { "@type": "Offer", price: "0", priceCurrency: "EUR", availability: "https://schema.org/InStock" } }
+      : activity.price_info
+        ? { offers: { "@type": "Offer", price: activity.price_info, priceCurrency: "EUR" } }
+        : {}),
+    organizer: { "@type": "Organization", name: activity.location_name },
+    ...(activity.source_url ? { url: activity.source_url } : {}),
+  };
+
+  const seoDesc =
+    (activity.description?.slice(0, 155) ||
+      `${activity.title} – Aktivität für Kinder in ${activity.district || "Berlin"}.`);
+
   return (
     <div className="min-h-screen pb-10">
-      {/* Top bar */}
+      <SEO
+        title={`${activity.title} – ${activity.district || "Berlin"} | Rausmi`}
+        description={seoDesc}
+        path={`/activity/${activity.id}`}
+        type="article"
+        jsonLd={eventJsonLd}
+      />
       <header className="px-5 pt-8 pb-4 flex items-center justify-between">
         <Link
           to="/"
