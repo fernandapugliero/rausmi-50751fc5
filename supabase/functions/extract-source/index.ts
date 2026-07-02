@@ -476,6 +476,7 @@ Regeln:
             registration_required: a.registration_required,
             registration_url: a.registration_url ?? null,
             category: a.category ?? source.default_category ?? null,
+            weather_suitability: a.weather_suitability ?? "indoor",
             image_url: source.default_image_url,
             source: "ai-extraction",
             source_url: source.url,
