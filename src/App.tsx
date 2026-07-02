@@ -59,7 +59,9 @@ const App = () => (
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/datenschutz" element={<Datenschutz />} />
-          
+          <Route path="/magazin" element={<Magazin />} />
+          <Route path="/magazin/:slug" element={<MagazinPost />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
         <CookieBanner />
