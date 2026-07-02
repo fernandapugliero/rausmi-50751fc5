@@ -1,9 +1,10 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, Globe, Mail, ExternalLink, Sparkles } from "lucide-react";
+import { MapPin, Globe, Mail, ExternalLink, Sparkles, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import kindercafePlaceholder from "@/assets/kindercafe-placeholder.jpg";
+
 
 const KindercafeDetail = () => {
   const { id } = useParams<{ id: string }>();
