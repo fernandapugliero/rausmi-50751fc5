@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, Globe, Mail, Coffee, ExternalLink } from "lucide-react";
+import { ArrowLeft, MapPin, Globe, Mail, ExternalLink, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import kindercafePlaceholder from "@/assets/kindercafe-placeholder.jpg";
@@ -26,10 +26,9 @@ const KindercafeDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen px-5 pt-6">
-        <div className="h-8 w-8 rounded-full bg-muted animate-pulse mb-6" />
-        <div className="space-y-4">
-          <div className="h-48 w-full rounded-2xl bg-muted animate-pulse" />
+      <div className="min-h-screen">
+        <div className="h-[60vh] w-full bg-muted animate-pulse" />
+        <div className="px-5 pt-6 space-y-4">
           <div className="h-8 w-3/4 rounded-xl bg-muted animate-pulse" />
           <div className="h-4 w-full rounded-lg bg-muted animate-pulse" />
         </div>
@@ -50,97 +49,151 @@ const KindercafeDetail = () => {
     );
   }
 
+  const mapsUrl =
+    cafe.google_maps_url ||
+    (cafe.address
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          `${cafe.name} ${cafe.address}`
+        )}`
+      : null);
+
   return (
-    <div className="min-h-screen pb-10">
-      {/* Top bar */}
-      <header className="px-5 pt-6 pb-4 flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full -ml-2"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <Link to="/" className="font-display font-semibold text-sm text-muted-foreground hover:text-primary transition-colors">
-          🟠 Rausmi
-        </Link>
-      </header>
+    <div className="min-h-screen pb-28 bg-background">
+      {/* Immersive hero */}
+      <div className="relative w-full h-[70vh] min-h-[420px] max-h-[720px] overflow-hidden">
+        <img
+          src={cafe.image_url || kindercafePlaceholder}
+          alt={cafe.name}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-      {/* Hero image */}
-      <div className="px-5 mb-6 max-w-4xl mx-auto">
-        <div className="rounded-2xl overflow-hidden h-72 sm:h-96 md:h-[28rem]">
-          <img
-            src={cafe.image_url || kindercafePlaceholder}
-            alt={cafe.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </div>
-
-      <div className="px-5 space-y-6">
-        {/* Title */}
-        <div>
-          <h1 className="font-display font-bold text-2xl leading-tight text-foreground">
-            {cafe.name}
-          </h1>
+        {/* Floating header — matches ActivityDetail pattern */}
+        <header className="absolute top-0 inset-x-0 px-5 pt-6 pb-4 flex items-center justify-between z-10">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full -ml-2 bg-white/15 backdrop-blur-md hover:bg-white/25 text-white"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <Link
+              to="/"
+              className="font-display font-semibold text-sm text-white/90 hover:text-white transition-colors drop-shadow"
+            >
+              🟠 Rausmi
+            </Link>
+          </div>
           {cafe.is_sponsored && (
-            <span className="inline-block mt-2 text-[10px] font-bold uppercase tracking-wider bg-accent text-accent-foreground px-2 py-0.5 rounded-full">
+            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full">
+              <Sparkles className="w-3 h-3" />
               Empfohlen
             </span>
           )}
-        </div>
+        </header>
 
-        {/* Description */}
+        {/* Title block */}
+        <div className="absolute bottom-0 inset-x-0 px-5 pb-7 z-10">
+          <div className="max-w-3xl mx-auto space-y-3">
+            {cafe.district && (
+              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/90 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full">
+                <MapPin className="w-3 h-3" />
+                {cafe.district}
+              </div>
+            )}
+            <h1 className="font-display font-bold text-4xl sm:text-5xl leading-[1.05] text-white drop-shadow-lg">
+              {cafe.name}
+            </h1>
+            {cafe.features && cafe.features.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {cafe.features.slice(0, 4).map((f: string) => (
+                  <span
+                    key={f}
+                    className="text-[11px] font-medium text-white bg-white/15 backdrop-blur-md border border-white/20 px-2.5 py-1 rounded-full"
+                  >
+                    {f}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-5 pt-8 max-w-3xl mx-auto space-y-8">
         {cafe.description && (
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base leading-relaxed text-foreground/90">
             {cafe.description}
           </p>
         )}
 
-        {/* Info card */}
-        <div className="space-y-4 bg-card rounded-2xl p-5 border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
+        {/* Info */}
+        <div className="grid gap-2">
           {cafe.address && (
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-              <div>
-                <span className="text-sm font-medium block">{cafe.address}</span>
-                <span className="text-xs text-muted-foreground">{cafe.district}</span>
+            <div className="flex items-start gap-4 p-4 rounded-2xl bg-card border border-border">
+              <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-0.5">
+                  Adresse
+                </div>
+                <div className="text-sm font-medium">{cafe.address}</div>
               </div>
             </div>
           )}
 
           {cafe.website_url && (
-            <div className="flex items-center gap-3">
-              <Globe className="w-5 h-5 text-primary shrink-0" />
-              <a
-                href={cafe.website_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-primary font-medium hover:underline truncate"
-              >
-                Website besuchen
-              </a>
-            </div>
+            <a
+              href={cafe.website_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 p-4 rounded-2xl bg-card border border-border hover:border-primary/40 transition-colors group"
+            >
+              <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-0.5">
+                  Website
+                </div>
+                <div className="text-sm font-medium text-primary truncate">
+                  {cafe.website_url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                </div>
+              </div>
+              <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </a>
           )}
 
           {cafe.contact_email && (
-            <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 text-primary shrink-0" />
-              <a
-                href={`mailto:${cafe.contact_email}`}
-                className="text-sm text-primary font-medium hover:underline"
-              >
-                {cafe.contact_email}
-              </a>
-            </div>
+            <a
+              href={`mailto:${cafe.contact_email}`}
+              className="flex items-center gap-4 p-4 rounded-2xl bg-card border border-border hover:border-primary/40 transition-colors"
+            >
+              <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="w-5 h-5 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-0.5">
+                  Kontakt
+                </div>
+                <div className="text-sm font-medium text-primary truncate">{cafe.contact_email}</div>
+              </div>
+            </a>
           )}
         </div>
 
-        {/* Features */}
+        {/* All features */}
         {cafe.features && cafe.features.length > 0 && (
-          <div className="space-y-2">
-            <h2 className="font-display font-semibold text-sm text-muted-foreground">Ausstattung</h2>
+          <div className="space-y-3">
+            <h2 className="font-display font-semibold text-sm uppercase tracking-wider text-muted-foreground">
+              Ausstattung
+            </h2>
             <div className="flex flex-wrap gap-2">
               {cafe.features.map((f: string) => (
                 <span key={f} className="chip chip-age">
@@ -150,20 +203,24 @@ const KindercafeDetail = () => {
             </div>
           </div>
         )}
-
-        {/* Google Maps link */}
-        {cafe.google_maps_url && (
-          <a
-            href={cafe.google_maps_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:underline"
-          >
-            <ExternalLink className="w-4 h-4" />
-            In Google Maps öffnen
-          </a>
-        )}
       </div>
+
+      {/* Sticky CTA */}
+      {mapsUrl && (
+        <div className="fixed bottom-0 inset-x-0 px-5 pb-5 pt-4 bg-gradient-to-t from-background via-background to-transparent z-20">
+          <div className="max-w-3xl mx-auto">
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full h-12 rounded-full bg-foreground text-background font-semibold text-sm shadow-lg hover:opacity-90 transition-opacity"
+            >
+              <MapPin className="w-4 h-4" />
+              Route in Google Maps öffnen
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
