@@ -58,8 +58,7 @@ export const AdminStatusCard = () => {
 
       return {
         pending: activities.filter((a) => !a.is_approved).length,
-        approved: activities.filter((a) => a.is_approved && !a.is_hidden).length,
-        hidden: activities.filter((a) => a.is_hidden).length,
+        approved: activities.filter((a) => a.is_approved).length,
         openReports: reports.filter((r) => r.status === "open").length,
         totalSources: sources.length,
         autoSources: autoSources.length,
