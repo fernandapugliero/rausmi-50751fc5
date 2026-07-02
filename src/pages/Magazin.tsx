@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowUpRight, CloudRain, Sparkles, Coffee } from "lucide-react";
+import { ArrowUpRight, CloudRain, Sparkles, Coffee } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
@@ -42,15 +42,6 @@ const Magazin = () => {
         path="/magazin"
       />
       <div className="flex-1 pb-10">
-        <header className="px-5 pt-8 pb-2 max-w-3xl mx-auto w-full">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Zurück
-          </Link>
-        </header>
 
         <div className="px-5 space-y-8 max-w-3xl mx-auto pt-4">
           <section className="text-center space-y-2">

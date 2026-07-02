@@ -212,12 +212,12 @@ const Index = () => {
                 <BookOpen className="w-6 h-6 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[11px] font-bold tracking-widest uppercase text-primary">Neu · Magazin</p>
+                <p className="text-[11px] font-bold tracking-widest uppercase text-primary">Magazin</p>
                 <h3 className="font-display font-bold text-base text-card-foreground mt-1">
-                  Was tun, wenn's regnet?
+                  Getestet, kuratiert, kinderfreundlich
                 </h3>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  Ideen für Regentage mit Kindern in Berlin.
+                  Ideen und Empfehlungen für Familien in Berlin.
                 </p>
               </div>
               <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />

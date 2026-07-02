@@ -1,5 +1,4 @@
-import { useParams, Link, Navigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { useParams, Navigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
@@ -181,16 +180,8 @@ const MagazinPost = () => {
         path={`/magazin/${slug}`}
         noindex={!post.published}
       />
-      <div className="flex-1 pb-10">
-        <header className="px-5 pt-8 pb-2 max-w-2xl mx-auto w-full">
-          <Link
-            to="/magazin"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Magazin
-          </Link>
-        </header>
+      <div className="flex-1 pb-10 pt-8">
+
 
         <article className="px-5 max-w-2xl mx-auto pt-4 space-y-6">
           <header className="space-y-2">
