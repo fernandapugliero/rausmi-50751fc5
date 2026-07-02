@@ -236,4 +236,32 @@ const Index = () => {
   );
 };
 
+function ActivityCounter() {
+  const { data } = useQuery({
+    queryKey: ["home-activity-counter"],
+    staleTime: 10 * 60 * 1000,
+    queryFn: async () => {
+      const now = new Date();
+      const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const { count } = await supabase
+        .from("activities")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "approved")
+        .gte("start_time", now.toISOString())
+        .lte("start_time", weekEnd.toISOString());
+      return count ?? 0;
+    },
+  });
+  if (!data || data < 5) return null;
+  return (
+    <p className="text-xs text-muted-foreground pt-1">
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary">
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+        {data} Aktivitäten diese Woche in Neukölln
+      </span>
+    </p>
+  );
+}
+
 export default Index;
+
