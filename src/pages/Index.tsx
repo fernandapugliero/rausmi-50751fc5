@@ -243,12 +243,13 @@ function ActivityCounter() {
     queryFn: async () => {
       const now = new Date();
       const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-      const { count } = await supabase
+      const { count } = await (supabase as any)
         .from("activities")
         .select("id", { count: "exact", head: true })
         .eq("status", "approved")
         .gte("start_time", now.toISOString())
         .lte("start_time", weekEnd.toISOString());
+
       return count ?? 0;
     },
   });
