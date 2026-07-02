@@ -172,7 +172,7 @@ const Index = () => {
                     Wickeltisch gesucht?
                   </h3>
                   <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">
-                    Babyfreundliche Orte mit Wickeltisch in deiner Nähe.
+                    Babyfreundliche Orte in deiner Nähe.
                   </p>
                 </div>
 
@@ -185,30 +185,51 @@ const Index = () => {
               </div>
 
               {/* Mini OSM-style map */}
-              <div className="relative w-[150px] shrink-0 overflow-hidden" style={{ backgroundColor: "#e8ebe0" }}>
-                {/* park / green area */}
-                <div className="absolute" style={{ left: "55%", top: "-10%", width: "80%", height: "55%", backgroundColor: "#d4e0c4", borderRadius: "40% 30% 45% 25%" }} />
-                {/* water */}
-                <div className="absolute" style={{ left: "-10%", bottom: "-15%", width: "80%", height: "45%", backgroundColor: "#b8d4e0", borderRadius: "30% 55% 20% 40%" }} />
-                {/* streets */}
-                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 150 170" aria-hidden="true">
-                  <line x1="-10" y1="60" x2="160" y2="90" stroke="#f0c674" strokeWidth="6" />
-                  <line x1="40" y1="-10" x2="80" y2="180" stroke="#f0c674" strokeWidth="6" />
-                  <line x1="120" y1="-10" x2="80" y2="180" stroke="#f0c674" strokeWidth="4" />
-                  <line x1="-10" y1="120" x2="160" y2="140" stroke="#ffffff" strokeWidth="3" />
+              <div className="relative w-[160px] shrink-0 overflow-hidden" style={{ backgroundColor: "#f2efe9" }}>
+                <svg
+                  className="absolute inset-0 h-full w-full"
+                  viewBox="0 0 160 170"
+                  preserveAspectRatio="xMidYMid slice"
+                  aria-hidden="true"
+                >
+                  {/* park */}
+                  <path d="M110 -10 Q160 20 155 60 Q150 85 120 80 Q95 75 100 40 Z" fill="#c8dcb0" />
+                  {/* water */}
+                  <path d="M-10 130 Q30 115 60 130 Q90 148 60 175 L-10 180 Z" fill="#aeceea" />
+                  {/* building blocks */}
+                  <g fill="#e7e2d6">
+                    <rect x="12" y="18" width="26" height="20" rx="2" />
+                    <rect x="12" y="46" width="18" height="22" rx="2" />
+                    <rect x="55" y="90" width="22" height="18" rx="2" />
+                    <rect x="85" y="95" width="26" height="22" rx="2" />
+                    <rect x="120" y="105" width="28" height="18" rx="2" />
+                  </g>
+                  {/* street casings */}
+                  <g stroke="#e6c37a" strokeLinecap="round" fill="none">
+                    <path d="M-10 78 Q60 68 170 92" strokeWidth="9" />
+                    <path d="M55 -10 Q68 60 62 180" strokeWidth="8" />
+                    <path d="M130 -10 Q118 70 150 180" strokeWidth="7" />
+                  </g>
+                  {/* street fills */}
+                  <g stroke="#ffffff" strokeLinecap="round" fill="none">
+                    <path d="M-10 78 Q60 68 170 92" strokeWidth="5" />
+                    <path d="M55 -10 Q68 60 62 180" strokeWidth="4.5" />
+                    <path d="M130 -10 Q118 70 150 180" strokeWidth="3.5" />
+                  </g>
+                  <path d="M20 130 L110 145" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.9" />
                 </svg>
 
                 {/* map pins (droplet) */}
                 {[
-                  { x: 62, y: 40, size: 18 },
-                  { x: 105, y: 55, size: 20 },
-                  { x: 70, y: 95, size: 16 },
-                  { x: 115, y: 100, size: 18 },
-                  { x: 55, y: 130, size: 16 },
+                  { x: 40, y: 50, size: 18 },
+                  { x: 92, y: 38, size: 20 },
+                  { x: 118, y: 68, size: 17 },
+                  { x: 72, y: 96, size: 18 },
+                  { x: 104, y: 122, size: 16 },
                 ].map((p, i) => (
                   <svg
                     key={i}
-                    className="absolute drop-shadow-sm"
+                    className="absolute drop-shadow-[0_1.5px_1.5px_rgba(0,0,0,0.25)]"
                     style={{ left: p.x, top: p.y, width: p.size, height: p.size }}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
@@ -217,21 +238,14 @@ const Index = () => {
                       d="M12 2 C7.6 2 4 5.6 4 10 c0 6 8 12 8 12 s8-6 8-12 c0-4.4-3.6-8-8-8 z"
                       fill="#2563eb"
                       stroke="#ffffff"
-                      strokeWidth="1.5"
+                      strokeWidth="1.6"
                     />
                     <circle cx="12" cy="10" r="2.6" fill="#ffffff" />
                   </svg>
                 ))}
 
-                {/* "you are here" ring pin */}
-                <div
-                  className="absolute rounded-full border-[3px] border-[#2563eb] bg-white"
-                  style={{ left: 88, top: 68, width: 14, height: 14 }}
-                  aria-hidden="true"
-                />
-
                 {/* soft blend into card */}
-                <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-card to-transparent" />
+                <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-card to-transparent" />
               </div>
             </a>
           </section>
