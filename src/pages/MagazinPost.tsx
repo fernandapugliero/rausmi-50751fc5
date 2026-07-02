@@ -180,7 +180,17 @@ const MagazinPost = () => {
         path={`/magazin/${slug}`}
         noindex={!post.published}
       />
-      <div className="flex-1 pb-10 pt-8">
+      <div className="flex-1 pb-10">
+        <header className="px-5 pt-8 pb-2 max-w-2xl mx-auto w-full">
+          <Link to="/" aria-label="Rausmi Startseite">
+            <div className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
+              <span className="text-2xl">🟠</span>
+              <span>Rausmi</span>
+            </div>
+          </Link>
+        </header>
+
+        <div className="flex-1 pb-10 pt-4">
 
 
         <article className="px-5 max-w-2xl mx-auto pt-4 space-y-6">
