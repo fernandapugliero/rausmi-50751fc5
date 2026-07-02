@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Footer } from "@/components/Footer";
-import { Bookmark, Plus, ExternalLink } from "lucide-react";
+import { Bookmark, Plus, ArrowUpRight, MapPin } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { QuickActions } from "@/components/QuickActions";
 import { KindercafeCarousel } from "@/components/KindercafeCarousel";
@@ -9,7 +9,6 @@ import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import type { SearchFilters } from "@/lib/types";
-import fixMyDiaperBanner from "@/assets/fixmydiaper-banner.jpg";
 
 
 const Index = () => {
