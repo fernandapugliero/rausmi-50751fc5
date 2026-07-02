@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { resolve } from "path";
 import { createClient } from "@supabase/supabase-js";
 
-const BASE_URL = "https://rausmi.lovable.app";
+const BASE_URL = "https://rausmi.com";
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://gghxpohlnrporovhoqyp.supabase.co";
 const SUPABASE_KEY =
