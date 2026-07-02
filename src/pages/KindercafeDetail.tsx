@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, Globe, Mail, ExternalLink, Sparkles } from "lucide-react";
+import { MapPin, Globe, Mail, ExternalLink, Sparkles, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import kindercafePlaceholder from "@/assets/kindercafe-placeholder.jpg";
@@ -23,6 +23,8 @@ const KindercafeDetail = () => {
     },
     enabled: !!id,
   });
+
+  const isClosed = cafe ? /vorübergehend geschlossen|temporarily closed/i.test(cafe.description ?? "") : false;
 
   if (isLoading) {
     return (
@@ -79,10 +81,16 @@ const KindercafeDetail = () => {
             <span>🟠</span>
             <span>Rausmi</span>
           </Link>
-          {cafe.is_sponsored && (
+          {cafe.is_sponsored && !isClosed && (
             <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full">
               <Sparkles className="w-3 h-3" />
               Empfohlen
+            </span>
+          )}
+          {isClosed && (
+            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-black/75 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/20">
+              <AlertTriangle className="w-3 h-3" />
+              Vorübergehend geschlossen
             </span>
           )}
         </header>
@@ -121,6 +129,20 @@ const KindercafeDetail = () => {
           <p className="text-base leading-relaxed text-foreground/90">
             {cafe.description}
           </p>
+        )}
+
+        {isClosed && (
+          <div className="rounded-2xl border border-black/10 bg-black/5 p-4 flex items-start gap-3">
+            <div className="w-9 h-9 shrink-0 rounded-full bg-black/10 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4 text-foreground" />
+            </div>
+            <div>
+              <div className="font-semibold text-sm">Vorübergehend geschlossen</div>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Dieses Café ist aktuell nicht geöffnet. Bitte prüfe vor einem Besuch die Website oder Social-Media-Kanäle des Betriebs.
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Info */}
@@ -197,7 +219,7 @@ const KindercafeDetail = () => {
       </div>
 
       {/* Sticky CTA */}
-      {mapsUrl && (
+      {mapsUrl && !isClosed && (
         <div className="fixed bottom-0 inset-x-0 px-5 pb-5 pt-4 bg-gradient-to-t from-background via-background to-transparent z-20">
           <div className="max-w-3xl mx-auto">
             <a
