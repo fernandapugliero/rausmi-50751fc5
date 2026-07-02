@@ -173,6 +173,9 @@ const Index = () => {
                 <h3 className="font-display text-xl font-bold leading-tight text-foreground">
                   Hast du Wickel gesagt?
                 </h3>
+                <p className="mt-1.5 text-sm text-muted-foreground leading-snug">
+                  Finde öffentliche Wickeltische in deiner Nähe.
+                </p>
               </div>
 
               {/* Map image with pins */}
