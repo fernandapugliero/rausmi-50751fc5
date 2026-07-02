@@ -360,9 +360,29 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
                         </span>
                       </div>
                       {others.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">
-                          Keine weiteren Events.
-                        </p>
+                        <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center space-y-3">
+                          <p className="text-3xl">🧸</p>
+                          <p className="text-sm text-foreground font-medium">
+                            Hier ist gerade wenig los.
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Probier ein anderes Zeitfenster oder schau bei den Kindercafés vorbei.
+                          </p>
+                          <div className="flex flex-wrap justify-center gap-2 pt-1">
+                            <a
+                              href="/"
+                              className="text-xs font-semibold rounded-full bg-primary/10 text-primary px-3 py-1.5 hover:bg-primary/20 transition-colors"
+                            >
+                              Kindercafés ansehen →
+                            </a>
+                            <a
+                              href="/magazin"
+                              className="text-xs font-semibold rounded-full bg-muted text-foreground px-3 py-1.5 hover:bg-muted/70 transition-colors"
+                            >
+                              Ideen im Magazin
+                            </a>
+                          </div>
+                        </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {others.map((activity, i) => (
