@@ -72,16 +72,25 @@ export function KindercafeCarousel() {
             className="relative flex-none w-[300px] h-[420px] rounded-[32px] overflow-hidden snap-center group text-left transition-transform active:scale-[0.98]"
             style={{ boxShadow: "var(--shadow-card)" }}
           >
-            {/* Photo */}
+            {/* Photo — softened to match site palette */}
             <img
               src={cafe.image_url || kindercafePlaceholder}
               alt={`Spielecke bei ${cafe.name}`}
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              style={{ filter: "saturate(0.82) contrast(0.94) brightness(0.98)" }}
               loading="lazy"
             />
 
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+            {/* Warm brand tint — unifies photo with site palette */}
+            <div
+              className="absolute inset-0 mix-blend-multiply pointer-events-none"
+              style={{ background: "linear-gradient(135deg, hsl(var(--primary) / 0.10), hsl(var(--accent) / 0.08))" }}
+            />
+            {/* Paper grain / softening layer */}
+            <div className="absolute inset-0 bg-[hsl(var(--background))]/10 mix-blend-soft-light pointer-events-none" />
+
+            {/* Gradient overlay for text legibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
             {/* Sponsored badge */}
             {cafe.is_sponsored && (
