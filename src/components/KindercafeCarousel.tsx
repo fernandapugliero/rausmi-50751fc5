@@ -32,10 +32,18 @@ export function KindercafeCarousel() {
         .order("is_sponsored", { ascending: false })
         .order("created_at", { ascending: false });
       if (error) throw error;
-      // Push temporarily-closed cafés to the end while preserving prior order
-      return (data as Kindercafe[]).slice().sort(
-        (a, b) => Number(isClosed(a)) - Number(isClosed(b))
-      );
+      // Explicit ordering: Neukölln cafés first (Maralou, La Fève), then Kiezkind,
+      // then any others, and temporarily-closed cafés always at the end.
+      const explicitOrder = ["Maralou", "La Fève", "Café Kiezkind"];
+      const rank = (c: Kindercafe) => {
+        const i = explicitOrder.indexOf(c.name);
+        return i === -1 ? explicitOrder.length : i;
+      };
+      return (data as Kindercafe[]).slice().sort((a, b) => {
+        const closedDiff = Number(isClosed(a)) - Number(isClosed(b));
+        if (closedDiff !== 0) return closedDiff;
+        return rank(a) - rank(b);
+      });
     },
   });
 
