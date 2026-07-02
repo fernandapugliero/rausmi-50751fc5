@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import kindercafePlaceholder from "@/assets/kindercafe-placeholder.jpg";
 
-
 const KindercafeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
