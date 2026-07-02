@@ -80,10 +80,16 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
       <div className="p-5 space-y-3">
         {/* Top row: status + actions */}
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex items-center gap-1.5 flex-wrap">
             {statusLabel && (
               <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
                 {statusLabel}
+              </span>
+            )}
+            {isNew && (
+              <span className="chip bg-primary/10 text-primary font-bold flex items-center gap-1">
+                <Sparkles className="w-3 h-3" />
+                Neu
               </span>
             )}
           </div>
