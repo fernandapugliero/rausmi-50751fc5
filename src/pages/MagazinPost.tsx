@@ -1,4 +1,4 @@
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
@@ -180,8 +180,15 @@ const MagazinPost = () => {
         path={`/magazin/${slug}`}
         noindex={!post.published}
       />
-      <div className="flex-1 pb-10 pt-8">
-
+      <div className="flex-1 pb-10">
+        <header className="px-5 pt-8 pb-2 max-w-2xl mx-auto w-full">
+          <Link to="/" aria-label="Rausmi Startseite">
+            <div className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
+              <span className="text-2xl">🟠</span>
+              <span>Rausmi</span>
+            </div>
+          </Link>
+        </header>
 
         <article className="px-5 max-w-2xl mx-auto pt-4 space-y-6">
           <header className="space-y-2">
