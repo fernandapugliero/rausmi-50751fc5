@@ -200,7 +200,7 @@ const MagazinPost = () => {
             </h1>
           </header>
 
-          <div className="prose prose-sm md:prose-base max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-3 prose-p:text-foreground/90 prose-p:leading-relaxed prose-p:my-5">
+          <div className="prose prose-sm md:prose-base max-w-none prose-headings:font-display prose-headings:font-bold prose-h2:text-xl prose-h2:mt-12 prose-h2:mb-5 prose-p:text-foreground/90 prose-p:leading-relaxed prose-p:my-7">
             {post.body}
           </div>
         </article>
