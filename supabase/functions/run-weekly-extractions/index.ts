@@ -57,8 +57,9 @@ Deno.serve(async (req) => {
 
   const { data: sources, error } = await supabase
     .from("sources")
-    .select("id, name")
-    .eq("is_active", true);
+    .select("id, name, crawl_mode")
+    .eq("is_active", true)
+    .eq("crawl_mode", "auto");
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
