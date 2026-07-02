@@ -35,7 +35,9 @@ export interface SearchFilters {
   ageGroup?: BabyAgeGroup | string;
   isFree?: boolean;
   registrationRequired?: boolean;
+  weatherIndoorOnly?: boolean;
   nearLat?: number;
   nearLng?: number;
   locationQuery?: string;
 }
+

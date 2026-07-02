@@ -28,6 +28,7 @@ export interface AirtableActivity {
   recurring: boolean;
   recurrence_rule: string | null;
   category: string | null;
+  weather_suitability: "indoor" | "outdoor" | "both";
   is_approved: boolean;
   created_at: string;
   updated_at: string;
@@ -43,7 +44,9 @@ export interface AirtableActivity {
   _verifiedAt?: string | null;
   _recurrenceType?: string | null;
   _dayOfWeek?: string | null;
+  _sourceCreatedAt?: string;
 }
+
 
 const DAY_NAMES_DE = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
 
@@ -164,7 +167,7 @@ export async function loadAirtableActivities(): Promise<AirtableActivity[]> {
 
   const { data, error } = await supabase
     .from("activities")
-    .select("id,title,description,location_name,address,district,latitude,longitude,start_time,end_time,recurring,recurrence_rule,age_groups,is_free,price_info,registration_required,registration_url,category,image_url,source,source_url,is_approved,created_at,updated_at,source_id,external_key,last_seen_at,duplicate_of_activity_id,pause_from,pause_until")
+    .select("id,title,description,location_name,address,district,latitude,longitude,start_time,end_time,recurring,recurrence_rule,age_groups,is_free,price_info,registration_required,registration_url,category,weather_suitability,image_url,source,source_url,is_approved,created_at,updated_at,source_id,external_key,last_seen_at,duplicate_of_activity_id,pause_from,pause_until")
     .eq("is_approved", true)
     .is("duplicate_of_activity_id", null);
 
@@ -205,6 +208,7 @@ export async function loadAirtableActivities(): Promise<AirtableActivity[]> {
         recurring: row.recurring ?? false,
         recurrence_rule: row.recurrence_rule,
         category: row.category,
+        weather_suitability: (row.weather_suitability ?? "both") as "indoor" | "outdoor" | "both",
         is_approved: true,
         created_at: row.created_at,
         updated_at: row.updated_at,
@@ -214,9 +218,11 @@ export async function loadAirtableActivities(): Promise<AirtableActivity[]> {
         _dayOfWeek: occ.dayOfWeek,
         _recurrenceType: row.recurring ? "weekly" : "once",
         _sponsored: false,
+        _sourceCreatedAt: row.created_at,
       });
     }
   }
+
 
   out.sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
 
