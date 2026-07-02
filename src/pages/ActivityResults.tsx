@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import type { SearchFilters } from "@/lib/types";
 import { TimeRangeSlider } from "@/components/TimeRangeSlider";
 
