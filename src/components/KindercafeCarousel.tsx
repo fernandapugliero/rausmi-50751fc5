@@ -19,6 +19,9 @@ interface Kindercafe {
 export function KindercafeCarousel() {
   const navigate = useNavigate();
 
+  const isClosed = (c: Kindercafe) =>
+    /vorübergehend geschlossen|temporarily closed/i.test(c.description ?? "");
+
   const { data: cafes, isLoading } = useQuery({
     queryKey: ["kindercafes"],
     queryFn: async () => {
@@ -29,7 +32,10 @@ export function KindercafeCarousel() {
         .order("is_sponsored", { ascending: false })
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Kindercafe[];
+      // Push temporarily-closed cafés to the end while preserving prior order
+      return (data as Kindercafe[]).slice().sort(
+        (a, b) => Number(isClosed(a)) - Number(isClosed(b))
+      );
     },
   });
 
@@ -93,9 +99,16 @@ export function KindercafeCarousel() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
             {/* Sponsored badge */}
-            {cafe.is_sponsored && (
+            {cafe.is_sponsored && !isClosed(cafe) && (
               <span className="absolute top-5 left-5 bg-accent text-accent-foreground text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg">
                 Empfohlen
+              </span>
+            )}
+
+            {/* Temporarily closed badge */}
+            {isClosed(cafe) && (
+              <span className="absolute top-5 left-5 bg-black/75 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg border border-white/20">
+                Vorübergehend geschlossen
               </span>
             )}
 
