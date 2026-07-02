@@ -172,7 +172,7 @@ const Index = () => {
                     Wickeltisch gesucht?
                   </h3>
                   <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">
-                    Babyfreundliche Orte mit Wickeltisch in deiner Nähe.
+                    Babyfreundliche Orte in deiner Nähe.
                   </p>
                 </div>
 
