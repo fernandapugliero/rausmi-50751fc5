@@ -1,5 +1,4 @@
-import { useParams, Link, Navigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { useParams, Navigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
