@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowUpRight, CloudRain } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, CloudRain, Sparkles, Coffee } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
@@ -11,7 +11,25 @@ const posts = [
       "Indoor-Spielplätze, Museen, Bibliotheken und andere trockene Ideen für den nächsten Regentag.",
     icon: CloudRain,
     tag: "Bei Regen",
-    date: "Getestet · 2025",
+    date: "2026",
+  },
+  {
+    slug: "indoor-spielplaetze-berlin",
+    title: "Die besten Indoor-Spielplätze in Berlin",
+    excerpt:
+      "Wo Kinder in Berlin bei jedem Wetter toben können – unsere Übersicht der beliebtesten Indoor-Spielplätze.",
+    icon: Sparkles,
+    tag: "Indoor",
+    date: "2026",
+  },
+  {
+    slug: "kindercafes-neukoelln-favoriten",
+    title: "Kindercafés in Neukölln: unsere Favoriten",
+    excerpt:
+      "Kaffee für Eltern, Spielecke für Kinder – die schönsten Kindercafés in Neukölln im Überblick.",
+    icon: Coffee,
+    tag: "Neukölln",
+    date: "2026",
   },
 ];
 
@@ -22,7 +40,6 @@ const Magazin = () => {
         title="Magazin – Rausmi"
         description="Getestete Ideen und Empfehlungen für Familien in Berlin."
         path="/magazin"
-        noindex
       />
       <div className="flex-1 pb-10">
         <header className="px-5 pt-8 pb-2 max-w-3xl mx-auto w-full">
