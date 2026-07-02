@@ -19,6 +19,9 @@ interface Kindercafe {
 export function KindercafeCarousel() {
   const navigate = useNavigate();
 
+  const isClosed = (c: Kindercafe) =>
+    /vorübergehend geschlossen|temporarily closed/i.test(c.description ?? "");
+
   const { data: cafes, isLoading } = useQuery({
     queryKey: ["kindercafes"],
     queryFn: async () => {
@@ -29,7 +32,10 @@ export function KindercafeCarousel() {
         .order("is_sponsored", { ascending: false })
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Kindercafe[];
+      // Push temporarily-closed cafés to the end while preserving prior order
+      return (data as Kindercafe[]).slice().sort(
+        (a, b) => Number(isClosed(a)) - Number(isClosed(b))
+      );
     },
   });
 
