@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Check, Trash2, Eye, EyeOff, Settings, Database, Flag } from "lucide-react";
+import { ArrowLeft, Check, Trash2, Eye, EyeOff, Settings, Database, Flag, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -12,11 +12,13 @@ import { EmptyState } from "@/components/EmptyState";
 import { CrawlerOverridesAdmin } from "@/components/CrawlerOverridesAdmin";
 import { SourcesAdmin } from "@/components/SourcesAdmin";
 import { ReportsAdmin } from "@/components/ReportsAdmin";
+import { NewsletterAdmin } from "@/components/NewsletterAdmin";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
-type Tab = "pending" | "approved" | "sources" | "crawler" | "reports";
+type Tab = "pending" | "approved" | "sources" | "crawler" | "reports" | "newsletter";
+
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -188,6 +190,15 @@ const Admin = () => {
             <Flag className="w-3.5 h-3.5" />
             Reports
           </Button>
+          <Button
+            variant={tab === "newsletter" ? "default" : "outline"}
+            size="sm"
+            className="rounded-full gap-1.5"
+            onClick={() => setTab("newsletter")}
+          >
+            <Mail className="w-3.5 h-3.5" />
+            Newsletter
+          </Button>
         </div>
 
         {tab === "sources" ? (
@@ -196,6 +207,9 @@ const Admin = () => {
           <CrawlerOverridesAdmin />
         ) : tab === "reports" ? (
           <ReportsAdmin />
+        ) : tab === "newsletter" ? (
+          <NewsletterAdmin />
+
         ) : isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
