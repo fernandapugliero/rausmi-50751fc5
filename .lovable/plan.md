@@ -1,87 +1,85 @@
-## Contexto importante antes do plano
+## Ordem de implementação
 
-As atividades exibidas no site **não vêm da tabela `activities` do banco** — elas vêm do `data.json` no GitHub (apenas community submissions vão para a tabela). Por isso "reaprovar tudo agora" no sentido de marcar `is_approved=false` não funciona para o conteúdo que você está vendo problemático.
+Grupo A — quick wins puros (sem DB novo)
+1. **Contador na home**: "X Aktivitäten diese Woche in Neukölln" em texto discreto abaixo do hero. Query: `activities` aprovadas com próxima ocorrência nos próximos 7 dias.
+2. **Badge "Neu"**: adiciono badge laranja em `ActivityCard` quando `created_at > now() - 7 dias`.
+3. **WhatsApp share rico**: em `ActivityCard`, mudo o texto do WhatsApp para incluir título + próxima data/hora + local + link (ao invés de só URL).
+4. **Fallback empático em resultados vazios**: em `/jetzt`, `/heute`, `/morgen` quando 0 resultados → mostrar mensagem simpática + sugestão "Vielleicht magst du einen Kindercafé besuchen?" com 2-3 cafés e link pro próximo dia com atividades.
 
-Boa notícia: já existe a tabela `crawler_overrides` com campo `hidden` por `event_key`. É o mecanismo certo para ocultar atividades específicas vindas do JSON. O plano abaixo usa isso e conecta com os reports.
+Grupo B — precisa de tabela nova
+5. **Histórico "Zuletzt angesehen"** no /konto:
+   - Nova tabela `user_activity_views` (user_id, activity_id, viewed_at) — só últimos 20 por usuário.
+   - Grava em `ActivityDetail` quando logado.
+   - Exibe em `/konto` acima dos bookmarks.
 
-PDF como fonte: hoje o link "Originalquelle ansehen" abre `source_url` em nova aba sem distinção. Vou detectar `.pdf` e mostrar "PDF öffnen" com ícone de documento.
+Grupo C — filtro Wetter (indoor/outdoor)
+6. **Coluna `weather_suitability`** em `activities` com enum ('indoor', 'outdoor', 'both'). Default 'both'.
+   - Prompt de extração (`extract-source`) atualizado para inferir do texto.
+   - Backfill: heurística SQL simples baseada em keywords ("Park", "Spielplatz", "draußen" → outdoor; "Halle", "Zentrum", "Bibliothek" → indoor).
+   - Novo filtro em `/jetzt`, `/heute`, `/morgen`: toggle "☔ Bei Regen" que filtra `indoor` + `both`.
 
----
+Grupo D — perfil funcional
+7. **Pré-filtro por idade quando logado**:
+   - Se usuário tem `child_ages` no profile, na home pré-seleciono a age range mais próxima antes de navegar.
+   - Aviso discreto: "Gefiltert für dein Kind (3 J.) — [alle zeigen]".
 
-## 1. Formulário de report na página da atividade
+Grupo E — magazin editorial
+8. **Nova rota `/magazin`** (index) + `/magazin/bei-regen-in-berlin` (primeiro post):
+   - Arquivos MDX/TSX estáticos (sem CMS por enquanto — 1 arquivo por post).
+   - Layout limpo: hero image, título, chapéu, corpo, CTA no fim ("Finde jetzt Aktivitäten bei Regen →" com filtro pré-aplicado).
+   - Link "Magazin" no header ao lado de "Mein Konto".
+   - **Texto do post**: eu escrevo o rascunho em alemão, você aprova antes de subir online.
+   - JSON-LD Article, entra no sitemap.
 
-Novo componente `ActivityReportForm.tsx` inserido em `ActivityDetail.tsx`, dentro de um `<details>` colapsável estilo nativo com o design do site (chevron animado, bordas suaves).
+## Decisão sobre o texto do post
 
-**Header colapsável:** "Etwas zu dieser Aktivität melden" + chevron.
+Eu escrevo o rascunho completo em alemão como um componente TSX comentado com `// DRAFT — não indexar até aprovação`. Adiciono `<meta name="robots" content="noindex">` na página até você liberar. Você me diz "publica" e eu tiro o noindex e adiciono ao sitemap.
 
-**Conteúdo (visível só quando aberto):**
-- Radio: **Ich bin Besucher:in** / **Ich bin Veranstalter:in**
-- Checkboxes (multi-select) com 4 opções pré-definidas + "Sonstiges":
-  - Aktivität hat verspätet begonnen
-  - Aktivität hat nicht stattgefunden
-  - Aktivität existiert nicht mehr
-  - Informationen sind falsch
-  - Sonstiges
-- Textarea opcional para comentário livre (max 1000 chars, validação zod)
-- Botão "Melden"
+## Detalhes técnicos
 
-**Auth obrigatório:** se usuário não logado, mostrar mensagem "Bitte melde dich an, um etwas zu melden" + botão que abre o `AuthDialog`. Após login, form aparece.
-
-Após submit: toast "Danke für dein Feedback!" e fecha o details.
-
-## 2. Tabela `activity_reports` (migration)
-
+**Migração 1** — `user_activity_views`:
+```sql
+CREATE TABLE public.user_activity_views (
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  activity_id uuid NOT NULL REFERENCES public.activities(id) ON DELETE CASCADE,
+  viewed_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, activity_id)
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_activity_views TO authenticated;
+GRANT ALL ON public.user_activity_views TO service_role;
+ALTER TABLE public.user_activity_views ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "own views select" ON public.user_activity_views FOR SELECT TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "own views insert" ON public.user_activity_views FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
+CREATE POLICY "own views update" ON public.user_activity_views FOR UPDATE TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "own views delete" ON public.user_activity_views FOR DELETE TO authenticated USING (user_id = auth.uid());
 ```
-activity_reports
-  id uuid pk
-  activity_id text            -- aceita ID composto (uuid__timestamp)
-  activity_title text          -- snapshot (atividade pode sumir do JSON)
-  activity_source_url text     -- snapshot
-  reporter_user_id uuid → auth.users (NOT NULL)
-  reporter_role text           -- 'visitor' | 'organizer'
-  issues text[]                -- ex: ['late','did_not_happen',...]
-  comment text
-  status text default 'open'   -- 'open' | 'resolved' | 'dismissed'
-  resolved_by uuid
-  resolved_at timestamptz
-  created_at, updated_at
+
+**Migração 2** — coluna `weather_suitability`:
+```sql
+CREATE TYPE public.weather_suit AS ENUM ('indoor','outdoor','both');
+ALTER TABLE public.activities ADD COLUMN weather_suitability public.weather_suit NOT NULL DEFAULT 'both';
+-- Backfill heurístico
+UPDATE public.activities SET weather_suitability = 'outdoor'
+  WHERE lower(title||' '||coalesce(description,'')||' '||coalesce(location_name,''))
+    ~ '(park|spielplatz|draußen|freibad|garten|wiese|hof|open air)';
+UPDATE public.activities SET weather_suitability = 'indoor'
+  WHERE lower(title||' '||coalesce(description,'')||' '||coalesce(location_name,''))
+    ~ '(halle|bibliothek|zentrum|café|kirche|hallenbad|indoor|drinnen|saal)'
+  AND weather_suitability = 'both';
 ```
 
-RLS:
-- `INSERT`: usuário autenticado pode criar com `reporter_user_id = auth.uid()`
-- `SELECT/UPDATE/DELETE`: apenas admins (`has_role`)
-- GRANTs apropriados (`authenticated` insert, `service_role` all)
+## Escopo intencionalmente fora
 
-## 3. Aba "Reports" no Admin
+- Não crio CMS pro magazin (1 arquivo TSX por post é suficiente pros próximos 5-10 posts).
+- Não crio página `/magazin/kategorie/*` — só index + posts individuais.
+- Não mexo em Kindercafés x Atividades unificados (isso ficou pra depois).
 
-Nova tab em `src/pages/Admin.tsx` (`tab: "reports"`) com:
-- Lista cards ordenados por `created_at desc`
-- Filtro: Open / Resolved / Dismissed
-- Cada card mostra: título da atividade (link para `/activity/:id`), reporter role, issues como chips, comentário, data, email do reporter
-- Ações por report:
-  - **Aktivität ausblenden** → upsert em `crawler_overrides` com `hidden=true` usando o ID base (sem `__suffix`) como `event_key`, e marca report como `resolved`
-  - **Erledigt** → marca `resolved`
-  - **Verwerfen** → marca `dismissed`
+## Ordem de execução
 
-## 4. Limpeza one-time (resposta honesta)
+1. Grupo A (4 itens paralelizáveis)
+2. Grupo B (migração + UI)
+3. Grupo C (migração + prompt + UI)
+4. Grupo D (UI apenas)
+5. Grupo E (rotas + draft do post pra você revisar)
 
-Não vou marcar atividades como pending porque elas não estão no banco. Em vez disso, o fluxo prático fica:
-- Reports chegam → você abre a aba Reports → 1 clique para ocultar via crawler_overrides
-- Para os casos atuais que você já viu (não-infantis, anmeldung errado), a melhor abordagem é você mesmo enviar reports ou eu adicionar um botão "Ocultar" direto no card de atividade da aba "Freigegeben"/"Crawler-Daten". Já existe `CrawlerOverridesAdmin` para gerenciar manualmente — posso adicionar busca/filtro lá se quiser, mas isso fica fora deste plano.
-
-## 5. PDF detection na página de detalhe
-
-Em `ActivityDetail.tsx`, detectar se `source_url` termina em `.pdf` (ou contém `.pdf?`) e renderizar "PDF öffnen" com ícone `FileText` em vez de "Originalquelle ansehen" com `ExternalLink`.
-
----
-
-## Arquivos afetados
-
-- **Migration nova** — tabela `activity_reports` + RLS + GRANTs + trigger updated_at
-- **Novo** `src/components/ActivityReportForm.tsx`
-- **Edit** `src/pages/ActivityDetail.tsx` — adicionar form + PDF detection
-- **Novo** `src/components/ReportsAdmin.tsx`
-- **Edit** `src/pages/Admin.tsx` — nova aba "Reports"
-- **Novo** `src/lib/reports.ts` — helpers de insert/list/resolve
-
-Confirma para eu seguir?
+Ao final te mando o rascunho do post pra você aprovar antes de eu remover o `noindex`.
