@@ -163,10 +163,10 @@ const Index = () => {
               href="https://fixmydiaper.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex h-[150px] w-full overflow-hidden rounded-[1.75rem] border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg active:scale-[0.99]"
+              className="group relative flex h-[175px] w-full overflow-hidden rounded-[1.75rem] border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg active:scale-[0.99]"
             >
               {/* Content */}
-              <div className="flex flex-1 flex-col justify-center p-5">
+              <div className="flex flex-1 flex-col justify-center p-5 pr-3">
                 <span className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                   Anzeige · FixMyDiaper
                 </span>
@@ -174,7 +174,7 @@ const Index = () => {
                   Hast du Wickel gesagt?
                 </h3>
                 <p className="mt-1.5 text-sm text-muted-foreground leading-snug">
-                  Finde öffentliche Wickeltische in deiner Nähe.
+                  Wickeltische in deiner Nähe.
                 </p>
               </div>
 
