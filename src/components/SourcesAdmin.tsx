@@ -244,6 +244,7 @@ export const SourcesAdmin = () => {
                     className="rounded-full gap-1.5"
                     onClick={() => runExtraction(s.id)}
                     disabled={running === s.id}
+                    title="KI-Extraktion sofort auslösen (auch wenn Inhalt unverändert)"
                   >
                     {running === s.id ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -256,7 +257,26 @@ export const SourcesAdmin = () => {
                     variant="outline"
                     size="sm"
                     className="rounded-full gap-1.5"
+                    onClick={() =>
+                      toggleMode.mutate({
+                        id: s.id,
+                        crawl_mode: isManual ? "auto" : "manual",
+                      })
+                    }
+                    title={
+                      isManual
+                        ? "Auf Auto stellen — Quelle wird wöchentlich gecrawlt"
+                        : "Auf Manuell stellen — Quelle wird beim wöchentlichen Cron übersprungen"
+                    }
+                  >
+                    {isManual ? "→ Auto" : "→ Manuell"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full gap-1.5"
                     onClick={() => toggleActive.mutate({ id: s.id, is_active: !s.is_active })}
+                    title={s.is_active ? "Quelle komplett pausieren" : "Quelle wieder aktivieren"}
                   >
                     <Power className="w-3.5 h-3.5" />
                     {s.is_active ? "Deaktivieren" : "Aktivieren"}
@@ -268,6 +288,7 @@ export const SourcesAdmin = () => {
                     onClick={() => {
                       if (confirm(`Quelle "${s.name}" löschen?`)) deleteSource.mutate(s.id);
                     }}
+                    title="Quelle unwiderruflich löschen (Aktivitäten bleiben bestehen)"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Löschen
