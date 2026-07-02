@@ -287,7 +287,8 @@ Regeln:
 - Falls eine Altersangabe fehlt, age_min_months=0 und age_max_months=72 setzen.
 - is_free: true wenn "kostenfrei"/"gratis" steht oder nichts zu Kosten erwähnt wird. Nur false wenn explizit ein Preis oder eine Gebühr genannt wird.
 - registration_required: STANDARD ist false. NUR true, wenn DIREKT NEBEN dieser konkreten Aktivität ein expliziter Hinweis wie "Anmeldung erforderlich", "nur mit Anmeldung", "geschlossener Kurs", "Voranmeldung nötig" oder eine konkrete Anmelde-E-Mail/-URL für genau diese Aktivität steht. 
-  WICHTIG: Globale Hinweise wie "Bitte für alle Kurse anmelden", "Bei Interesse melden Sie sich", allgemeine Telefonnummern oder Newsletter-Hinweise zählen NICHT — sie gelten dem Haus, nicht der einzelnen Aktivität. Offene Treffs ("offener Treff", "Familientreff", "Krabbelgruppe ohne Anmeldung", "Drop-in") sind IMMER registration_required=false.`;
+  WICHTIG: Globale Hinweise wie "Bitte für alle Kurse anmelden", "Bei Interesse melden Sie sich", allgemeine Telefonnummern oder Newsletter-Hinweise zählen NICHT — sie gelten dem Haus, nicht der einzelnen Aktivität. Offene Treffs ("offener Treff", "Familientreff", "Krabbelgruppe ohne Anmeldung", "Drop-in") sind IMMER registration_required=false.
+- weather_suitability: "indoor" wenn die Aktivität DRINNEN stattfindet (Räume, Halle, Café, Kirche, Bibliothek), "outdoor" wenn sie DRAUSSEN stattfindet (Spielplatz, Park, Wanderung, Garten, Straßenfest), "both" wenn beides möglich ist oder unklar. Bei Zweifel: "indoor".`;
 
       const userPrompt = fetched.join("\n\n");
 
@@ -319,6 +320,7 @@ Regeln:
                     registration_required: { type: "boolean" },
                     registration_url: { type: "string" },
                     category: { type: "string" },
+                    weather_suitability: { type: "string", enum: ["indoor", "outdoor", "both"], description: "indoor=drinnen, outdoor=draußen, both=beides möglich" },
                     notes: { type: "string" },
                     pause_from: { type: "string", description: "YYYY-MM-DD, Start einer Pause/Ferien-Periode" },
                     pause_until: { type: "string", description: "YYYY-MM-DD, Ende einer Pause/Ferien-Periode (inklusiv)" },
