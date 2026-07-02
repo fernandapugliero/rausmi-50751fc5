@@ -609,6 +609,7 @@ export type Database = {
         | "Marzahn-Hellersdorf"
         | "Lichtenberg"
         | "Reinickendorf"
+        | "Prenzlauer Berg"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -757,6 +758,7 @@ export const Constants = {
         "Marzahn-Hellersdorf",
         "Lichtenberg",
         "Reinickendorf",
+        "Prenzlauer Berg",
       ],
     },
   },

@@ -1,0 +1,1 @@
+ALTER TYPE berlin_district ADD VALUE IF NOT EXISTS 'Prenzlauer Berg';
