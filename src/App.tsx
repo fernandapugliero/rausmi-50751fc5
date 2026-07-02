@@ -19,6 +19,8 @@ import Konto from "./pages/Konto";
 import Kontakt from "./pages/Kontakt";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
+import Magazin from "./pages/Magazin";
+import MagazinPost from "./pages/MagazinPost";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
 import CookieBanner from "./components/CookieBanner";
@@ -57,7 +59,9 @@ const App = () => (
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/datenschutz" element={<Datenschutz />} />
-          
+          <Route path="/magazin" element={<Magazin />} />
+          <Route path="/magazin/:slug" element={<MagazinPost />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
         <CookieBanner />

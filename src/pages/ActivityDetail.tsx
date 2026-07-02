@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark, Repeat, Star, CheckCircle, FileText } from "lucide-react";
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { fetchAllActivities } from "@/lib/activity-queries";
 import { formatActivityTime, getRelativeTimeLabel, getAgeLabel, getRecurringDayLabel } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { AuthDialog } from "@/components/AuthDialog";
 import { ActivityReportForm } from "@/components/ActivityReportForm";
 import { ActivityReviewForm } from "@/components/ActivityReviewForm";
@@ -15,6 +18,7 @@ const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
+  const { user } = useAuth();
 
   const { data: activity, isLoading } = useQuery({
     queryKey: ["activity", id],
@@ -25,6 +29,19 @@ const ActivityDetail = () => {
     },
     enabled: !!id,
   });
+
+  // Log view for logged-in users (uses the underlying DB row id, not the occurrence id)
+  useEffect(() => {
+    if (!user || !activity) return;
+    const rowId = activity.id.split("__")[0];
+    void supabase
+      .from("user_activity_views")
+      .upsert(
+        { user_id: user.id, activity_id: rowId, viewed_at: new Date().toISOString() },
+        { onConflict: "user_id,activity_id" }
+      );
+  }, [user, activity]);
+
 
   if (isLoading) {
     return (

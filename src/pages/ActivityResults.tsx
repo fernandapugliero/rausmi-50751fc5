@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import type { SearchFilters } from "@/lib/types";
 import { TimeRangeSlider } from "@/components/TimeRangeSlider";
 
@@ -45,6 +46,35 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [showStarting, setShowStarting] = useState(true);
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user } = useAuth();
+  const [ageAutoApplied, setAgeAutoApplied] = useState(false);
+
+  // Pre-filter by youngest child's age when the user is logged in and has profile data.
+  useEffect(() => {
+    if (!user || ageAutoApplied) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("children_ages")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      const ages = (data?.children_ages ?? []) as number[];
+      if (!ages.length) {
+        setAgeAutoApplied(true);
+        return;
+      }
+      const youngest = Math.min(...ages);
+      const ageGroup =
+        youngest < 1 ? "0-1" : youngest < 3 ? "1-3" : "3+";
+      setFilters((f) => (f.ageGroup ? f : { ...f, ageGroup }));
+      setAgeAutoApplied(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, ageAutoApplied]);
+
 
   // Time-of-day range slider (everything except "now")
   const showTimeSlider = defaultTimeRange !== "now";
@@ -360,9 +390,29 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
                         </span>
                       </div>
                       {others.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">
-                          Keine weiteren Events.
-                        </p>
+                        <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center space-y-3">
+                          <p className="text-3xl">🧸</p>
+                          <p className="text-sm text-foreground font-medium">
+                            Hier ist gerade wenig los.
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Probier ein anderes Zeitfenster oder schau bei den Kindercafés vorbei.
+                          </p>
+                          <div className="flex flex-wrap justify-center gap-2 pt-1">
+                            <a
+                              href="/"
+                              className="text-xs font-semibold rounded-full bg-primary/10 text-primary px-3 py-1.5 hover:bg-primary/20 transition-colors"
+                            >
+                              Kindercafés ansehen →
+                            </a>
+                            <a
+                              href="/magazin"
+                              className="text-xs font-semibold rounded-full bg-muted text-foreground px-3 py-1.5 hover:bg-muted/70 transition-colors"
+                            >
+                              Ideen im Magazin
+                            </a>
+                          </div>
+                        </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {others.map((activity, i) => (

@@ -86,17 +86,49 @@ const Konto = () => {
       });
   }, [user]);
 
-  // Load all activities to resolve bookmarks
+  // Load all activities to resolve bookmarks + recent views
   const { data: allActivities } = useQuery({
     queryKey: ["all-activities-for-bookmarks"],
     queryFn: fetchAllActivities,
     enabled: !!user,
   });
 
+  // Recently viewed (last 8)
+  const { data: recentViewIds } = useQuery({
+    queryKey: ["recent-views", user?.id],
+    enabled: !!user,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("user_activity_views")
+        .select("activity_id, viewed_at")
+        .eq("user_id", user!.id)
+        .order("viewed_at", { ascending: false })
+        .limit(8);
+      return (data ?? []).map((r) => r.activity_id);
+    },
+  });
+
+  const recentlyViewed = useMemo(() => {
+    if (!allActivities || !recentViewIds || recentViewIds.length === 0) return [];
+    // Each recentViewId is a DB row id; activities carry occurrence ids like `${rowId}__${date}`.
+    // Pick the earliest upcoming occurrence per row id, preserving click order.
+    const byRow = new Map<string, typeof allActivities[number]>();
+    for (const a of allActivities) {
+      const rowId = a.id.split("__")[0];
+      if (!byRow.has(rowId)) byRow.set(rowId, a);
+    }
+    return recentViewIds
+      .map((rowId) => byRow.get(rowId))
+      .filter((a): a is NonNullable<typeof a> => !!a)
+      .slice(0, 6);
+  }, [allActivities, recentViewIds]);
+
   const bookmarkedActivities = useMemo(() => {
     if (!allActivities) return [];
     return allActivities.filter((a) => isBookmarked(a.id));
   }, [allActivities, isBookmarked]);
+
 
   const handleSave = async () => {
     if (!user) return;
@@ -354,6 +386,28 @@ const Konto = () => {
             )}
           </section>
 
+          {/* Recently viewed */}
+          {recentlyViewed.length > 0 && (
+            <section>
+              <h3 className="font-display font-bold text-lg mb-4">
+                Zuletzt angesehen{" "}
+                <span className="text-sm text-muted-foreground font-medium">
+                  ({recentlyViewed.length})
+                </span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {recentlyViewed.map((activity) => (
+                  <ActivityCard
+                    key={activity.id}
+                    activity={activity}
+                    isBookmarked={isBookmarked(activity.id)}
+                    onToggleBookmark={toggle}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Saved events */}
           <section>
             <h3 className="font-display font-bold text-lg mb-4">
@@ -387,6 +441,7 @@ const Konto = () => {
               </div>
             )}
           </section>
+
 
           {/* Sign out */}
           <section className="pt-4">

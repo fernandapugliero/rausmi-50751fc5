@@ -49,6 +49,7 @@ export type Database = {
           submitter_name: string | null
           title: string
           updated_at: string
+          weather_suitability: Database["public"]["Enums"]["weather_suit"]
         }
         Insert: {
           address?: string | null
@@ -84,6 +85,7 @@ export type Database = {
           submitter_name?: string | null
           title: string
           updated_at?: string
+          weather_suitability?: Database["public"]["Enums"]["weather_suit"]
         }
         Update: {
           address?: string | null
@@ -119,6 +121,7 @@ export type Database = {
           submitter_name?: string | null
           title?: string
           updated_at?: string
+          weather_suitability?: Database["public"]["Enums"]["weather_suit"]
         }
         Relationships: [
           {
@@ -502,6 +505,32 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activity_views: {
+        Row: {
+          activity_id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          activity_id: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          activity_id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activity_views_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_bookmarks: {
         Row: {
           activity_id: string
@@ -582,6 +611,7 @@ export type Database = {
           submitter_name: string | null
           title: string
           updated_at: string
+          weather_suitability: Database["public"]["Enums"]["weather_suit"]
         }[]
         SetofOptions: {
           from: "*"
@@ -613,6 +643,7 @@ export type Database = {
         | "Lichtenberg"
         | "Reinickendorf"
         | "Prenzlauer Berg"
+      weather_suit: "indoor" | "outdoor" | "both"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -763,6 +794,7 @@ export const Constants = {
         "Reinickendorf",
         "Prenzlauer Berg",
       ],
+      weather_suit: ["indoor", "outdoor", "both"],
     },
   },
 } as const

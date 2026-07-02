@@ -33,12 +33,24 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
     "3-6": "3–6 J.",
   };
 
+  const toggleIndoor = () => {
+    onChange({ ...filters, weatherIndoorOnly: filters.weatherIndoorOnly === true ? undefined : true });
+  };
+
   return (
     <div
       ref={scrollRef}
       className="flex gap-2 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide"
       style={{ WebkitOverflowScrolling: "touch" }}
     >
+      <button
+        className={`filter-chip ${filters.weatherIndoorOnly === true ? "active" : ""}`}
+        onClick={toggleIndoor}
+        title="Nur Aktivitäten drinnen"
+      >
+        ☔ Bei Regen
+      </button>
+
       <button
         className={`filter-chip ${filters.isFree === true ? "active" : ""}`}
         onClick={toggleFree}
@@ -65,3 +77,4 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
     </div>
   );
 }
+

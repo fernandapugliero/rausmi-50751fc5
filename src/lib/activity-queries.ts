@@ -170,8 +170,13 @@ export async function searchActivities(filters: SearchFilters) {
     results = results.filter((a) => !a.registration_required);
   }
 
+  if (filters.weatherIndoorOnly === true) {
+    results = results.filter((a) => a.weather_suitability !== "outdoor");
+  }
+
   return addDistanceAndSort(results, filters.nearLat, filters.nearLng);
 }
+
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
