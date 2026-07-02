@@ -122,30 +122,39 @@ const Index = () => {
           <section className="grid grid-cols-2 gap-3">
             <button
               onClick={() => navigate("/aktivitaet-einreichen")}
-              className="relative text-left rounded-3xl bg-primary/10 p-5 pb-6 group active:scale-[0.98] transition-transform"
+              className="group relative flex flex-col justify-between text-left rounded-[2rem] bg-card border-2 border-primary/15 p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/60 hover:-translate-y-1 active:scale-[0.98]"
             >
-              <p className="text-[10px] font-bold tracking-widest uppercase text-primary">Mitmachen</p>
-              <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-2 pr-6">
-                Aktivität vorschlagen
-              </h3>
-              <div className="absolute bottom-4 right-4 w-9 h-9 rounded-2xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Plus className="w-4 h-4 text-primary-foreground" strokeWidth={2.5} />
+              <div>
+                <p className="text-[10px] font-bold tracking-widest uppercase text-primary">Mitmachen</p>
+                <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1.5">
+                  Aktivität<br />vorschlagen
+                </h3>
+              </div>
+              <div className="mt-8 flex justify-end">
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/25 transition-transform group-hover:scale-110">
+                  <Plus className="w-5 h-5" strokeWidth={3} />
+                </div>
               </div>
             </button>
 
             <button
               onClick={() => navigate("/event-einreichen")}
-              className="relative text-left rounded-3xl bg-accent/15 p-5 pb-6 group active:scale-[0.98] transition-transform"
+              className="group relative flex flex-col justify-between text-left rounded-[2rem] bg-card border-2 border-accent/25 p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:border-accent hover:-translate-y-1 active:scale-[0.98]"
             >
-              <p className="text-[10px] font-bold tracking-widest uppercase text-accent-foreground/70">Community</p>
-              <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-2 pr-6">
-                Event einreichen
-              </h3>
-              <div className="absolute bottom-4 right-4 w-9 h-9 rounded-2xl bg-accent flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Plus className="w-4 h-4 text-accent-foreground" strokeWidth={2.5} />
+              <div>
+                <p className="text-[10px] font-bold tracking-widest uppercase text-accent-foreground/70">Community</p>
+                <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1.5">
+                  Event<br />einreichen
+                </h3>
+              </div>
+              <div className="mt-8 flex justify-end">
+                <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-accent-foreground shadow-lg shadow-accent/30 transition-transform group-hover:scale-110">
+                  <Plus className="w-5 h-5" strokeWidth={3} />
+                </div>
               </div>
             </button>
           </section>
+
 
           {/* Ad banner: FixMyDiaper — brand card with mini OSM-style map */}
           <section>
