@@ -72,22 +72,13 @@ const KindercafeDetail = () => {
 
         {/* Floating header — matches ActivityDetail pattern */}
         <header className="absolute top-0 inset-x-0 px-5 pt-6 pb-4 flex items-center justify-between z-10">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full -ml-2 bg-white/15 backdrop-blur-md hover:bg-white/25 text-white"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <Link
-              to="/"
-              className="font-display font-semibold text-sm text-white/90 hover:text-white transition-colors drop-shadow"
-            >
-              🟠 Rausmi
-            </Link>
-          </div>
+          <Link
+            to="/"
+            className="font-display font-bold text-2xl tracking-tight text-white drop-shadow-md flex items-center gap-1.5"
+          >
+            <span>🟠</span>
+            <span>Rausmi</span>
+          </Link>
           {cafe.is_sponsored && (
             <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full">
               <Sparkles className="w-3 h-3" />
