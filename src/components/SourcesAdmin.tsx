@@ -97,6 +97,20 @@ export const SourcesAdmin = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-sources"] }),
   });
 
+  const toggleMode = useMutation({
+    mutationFn: async ({ id, crawl_mode }: { id: string; crawl_mode: "auto" | "manual" }) => {
+      const { error } = await supabase
+        .from("sources")
+        .update({ crawl_mode })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Crawl-Modus aktualisiert");
+      qc.invalidateQueries({ queryKey: ["admin-sources"] });
+    },
+  });
+
   const deleteSource = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("sources").delete().eq("id", id);
