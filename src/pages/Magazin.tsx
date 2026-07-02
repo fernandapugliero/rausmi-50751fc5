@@ -42,6 +42,14 @@ const Magazin = () => {
         path="/magazin"
       />
       <div className="flex-1 pb-10">
+        <header className="px-5 pt-8 pb-2 max-w-3xl mx-auto w-full">
+          <Link to="/" aria-label="Rausmi Startseite">
+            <div className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
+              <span className="text-2xl">🟠</span>
+              <span>Rausmi</span>
+            </div>
+          </Link>
+        </header>
 
         <div className="px-5 space-y-8 max-w-3xl mx-auto pt-4">
           <section className="text-center space-y-2">
