@@ -1,4 +1,4 @@
-import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star, Link2, MessageCircle } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star, Link2, MessageCircle, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
 import type { AirtableActivity } from "@/lib/airtable";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 interface ActivityCardProps {
-  activity: (Activity | AirtableActivity) & { _distance?: number | null; _ageLabel?: string | null; _sponsored?: boolean; _recurrenceType?: string | null; _dayOfWeek?: string | null };
+  activity: (Activity | AirtableActivity) & { _distance?: number | null; _ageLabel?: string | null; _sponsored?: boolean; _recurrenceType?: string | null; _dayOfWeek?: string | null; _sourceCreatedAt?: string };
   isBookmarked?: boolean;
   onToggleBookmark?: (id: string) => void;
 }
@@ -19,20 +19,34 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
   const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
 
+  // "Neu": row created within last 7 days (uses source row created_at when available)
+  const createdRef = (activity as { _sourceCreatedAt?: string })._sourceCreatedAt ?? activity.created_at;
+  const isNew = createdRef ? (Date.now() - new Date(createdRef).getTime()) < 7 * 24 * 60 * 60 * 1000 : false;
+
   const handleBookmark = (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleBookmark?.(activity.id);
   };
 
   const shareUrl = `${(typeof window !== "undefined" && window.location.origin) || ""}/activity/${activity.id}`;
+  const richShareText = [
+    `🟠 ${activity.title}`,
+    `📅 ${formatActivityTime(startTime, endTime)}`,
+    `📍 ${activity.location_name}${activity.district ? `, ${activity.district}` : ""}`,
+    activity.is_free ? "✨ Kostenlos" : (activity.price_info ? `💶 ${activity.price_info}` : ""),
+    "",
+    `👉 ${shareUrl}`,
+    "",
+    "Gefunden auf Rausmi – Aktivitäten mit Kindern in Berlin",
+  ].filter(Boolean).join("\n");
   const shareText = `${activity.title} – ${activity.location_name}`;
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(richShareText)}`;
 
   const handleNativeShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       if (navigator.share) {
-        await navigator.share({ title: activity.title, text: shareText, url: shareUrl });
+        await navigator.share({ title: activity.title, text: richShareText, url: shareUrl });
       } else {
         throw new Error("not supported");
       }
@@ -51,6 +65,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
       toast.error("Konnte Link nicht kopieren");
     }
   };
+
 
   return (
     <div
