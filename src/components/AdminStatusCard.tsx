@@ -22,7 +22,7 @@ export const AdminStatusCard = () => {
           .select("source_id, status, started_at")
           .order("started_at", { ascending: false })
           .limit(200),
-        supabase.from("activities").select("is_approved, is_hidden"),
+        supabase.from("activities").select("is_approved"),
         supabase.from("activity_reports").select("status"),
       ]);
 
