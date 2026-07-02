@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { MapPin, Star, Coffee, ChevronRight } from "lucide-react";
+import { MapPin, Coffee } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import kindercafePlaceholder from "@/assets/kindercafe-placeholder.jpg";
 
@@ -41,7 +41,7 @@ export function KindercafeCarousel() {
         </h2>
         <div className="flex gap-4 overflow-x-auto scrollbar-hide -mx-5 px-5">
           {[1, 2].map((i) => (
-            <div key={i} className="w-64 shrink-0 h-56 rounded-2xl bg-muted animate-pulse" />
+            <div key={i} className="w-[300px] h-[420px] shrink-0 rounded-[32px] bg-muted animate-pulse" />
           ))}
         </div>
       </section>
@@ -51,85 +51,94 @@ export function KindercafeCarousel() {
   if (!cafes || cafes.length === 0) return null;
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="font-display font-bold text-lg text-foreground">
+    <section className="space-y-4">
+      <div className="flex items-baseline justify-between">
+        <h2 className="font-display font-bold text-lg text-foreground tracking-tight">
           Cafés mit Spielecke
         </h2>
         <button
           onClick={() => navigate("/kindercafe-einreichen")}
-          className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
+          className="text-xs font-semibold text-primary hover:underline"
         >
           Café eintragen
-          <ChevronRight className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto scrollbar-hide -mx-5 px-5 pb-2">
+      <div className="flex gap-4 overflow-x-auto scrollbar-hide -mx-5 px-5 pb-2 snap-x snap-mandatory">
         {cafes.map((cafe) => (
-          <div
+          <button
             key={cafe.id}
-            className="w-64 shrink-0 rounded-2xl overflow-hidden border border-border bg-card cursor-pointer group transition-all hover:shadow-md"
-            style={{ boxShadow: "var(--shadow-card)" }}
             onClick={() => navigate(`/kindercafe/${cafe.id}`)}
+            className="relative flex-none w-[300px] h-[420px] rounded-[32px] overflow-hidden snap-center group text-left transition-transform active:scale-[0.98]"
+            style={{ boxShadow: "var(--shadow-card)" }}
           >
-            {/* Image */}
-            <div className="relative h-36 overflow-hidden">
-              <img
-                src={cafe.image_url || kindercafePlaceholder}
-                alt={`Spielecke bei ${cafe.name}`}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-              />
-              {cafe.is_sponsored && (
-                <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider bg-accent text-accent-foreground px-2 py-0.5 rounded-full">
-                  Empfohlen
-                </span>
-              )}
-            </div>
+            {/* Photo */}
+            <img
+              src={cafe.image_url || kindercafePlaceholder}
+              alt={`Spielecke bei ${cafe.name}`}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy"
+            />
+
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
+            {/* Sponsored badge */}
+            {cafe.is_sponsored && (
+              <span className="absolute top-5 left-5 bg-accent text-accent-foreground text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full shadow-lg">
+                Empfohlen
+              </span>
+            )}
 
             {/* Info */}
-            <div className="p-3 space-y-1.5">
-              <h3 className="font-display font-bold text-sm leading-tight text-card-foreground group-hover:text-primary transition-colors">
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="flex items-center gap-1.5 text-white/85 mb-1.5">
+                <MapPin className="w-3.5 h-3.5" />
+                <span className="text-[11px] font-semibold uppercase tracking-wide">
+                  {cafe.district}
+                </span>
+              </div>
+
+              <h3 className="font-display text-2xl font-bold text-white mb-3 tracking-tight leading-tight">
                 {cafe.name}
               </h3>
 
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <MapPin className="w-3 h-3 shrink-0" />
-                <span className="truncate">{cafe.district}</span>
-              </div>
-
               {cafe.features.length > 0 && (
-                <div className="flex flex-wrap gap-1 pt-0.5">
+                <div className="flex flex-wrap gap-1.5">
                   {cafe.features.slice(0, 3).map((f) => (
-                    <span key={f} className="text-[10px] font-medium bg-muted text-muted-foreground rounded-full px-2 py-0.5">
+                    <span
+                      key={f}
+                      className="bg-white/20 backdrop-blur-md border border-white/30 text-white text-[11px] font-medium px-3 py-1 rounded-full"
+                    >
                       {f}
                     </span>
                   ))}
                   {cafe.features.length > 3 && (
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white/80 text-[11px] font-medium px-3 py-1 rounded-full">
                       +{cafe.features.length - 3}
                     </span>
                   )}
                 </div>
               )}
             </div>
-          </div>
+          </button>
         ))}
 
         {/* CTA card */}
-        <div
-          className="w-64 shrink-0 rounded-2xl border-2 border-dashed border-primary/20 bg-primary/5 flex flex-col items-center justify-center p-6 cursor-pointer hover:border-primary/40 transition-colors"
+        <button
           onClick={() => navigate("/kindercafe-einreichen")}
+          className="flex-none w-[300px] h-[420px] rounded-[32px] border-2 border-dashed border-primary/25 bg-primary/5 flex flex-col items-center justify-center p-8 snap-center hover:border-primary/50 hover:bg-primary/10 transition-colors"
         >
-          <Coffee className="w-8 h-8 text-primary mb-3" />
-          <p className="font-display font-bold text-sm text-center text-card-foreground">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+            <Coffee className="w-6 h-6 text-primary" />
+          </div>
+          <p className="font-display font-bold text-base text-center text-card-foreground">
             Kennst du ein Café mit Spielecke?
           </p>
-          <p className="text-xs text-muted-foreground text-center mt-1">
+          <p className="text-xs text-muted-foreground text-center mt-1.5">
             Trage es hier ein!
           </p>
-        </div>
+        </button>
       </div>
     </section>
   );
