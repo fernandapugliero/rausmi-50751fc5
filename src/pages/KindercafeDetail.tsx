@@ -25,6 +25,8 @@ const KindercafeDetail = () => {
     enabled: !!id,
   });
 
+  const isClosed = cafe ? /vorübergehend geschlossen|temporarily closed/i.test(cafe.description ?? "") : false;
+
   if (isLoading) {
     return (
       <div className="min-h-screen">
