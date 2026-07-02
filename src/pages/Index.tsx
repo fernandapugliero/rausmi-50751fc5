@@ -152,17 +152,34 @@ const Index = () => {
               href="https://fixmydiaper.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center justify-between rounded-3xl border border-border/60 bg-muted/30 px-5 py-4 hover:bg-muted/50 transition-all"
+              className="group relative block overflow-hidden rounded-3xl border border-border/60 hover:shadow-lg transition-all"
             >
-              <div className="min-w-0">
-                <p className="text-[9px] font-bold tracking-widest uppercase text-muted-foreground/60 mb-0.5">Anzeige · FixMyDiaper</p>
-                <h3 className="font-display font-semibold text-sm text-foreground/80 leading-snug">
-                  Wickeltisch in der Nähe finden?
-                </h3>
+              <img
+                src={fixMyDiaperBanner}
+                alt="Wickeltisch in Berlin finden"
+                className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                width={1280}
+                height={512}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/10" />
+              <div className="absolute inset-0 flex items-center justify-between px-5">
+                <div className="min-w-0 max-w-[65%]">
+                  <p className="text-[9px] font-bold tracking-widest uppercase text-primary/80 mb-1">
+                    Anzeige · FixMyDiaper
+                  </p>
+                  <h3 className="font-display font-bold text-base text-foreground leading-tight">
+                    Wickeltisch in der Nähe finden
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                    Jetzt entdecken
+                    <ExternalLink className="w-3 h-3" />
+                  </p>
+                </div>
               </div>
-              <ExternalLink className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors shrink-0 ml-3" />
             </a>
           </section>
+
 
           {/* Newsletter signup */}
           <NewsletterSignup />
