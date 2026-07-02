@@ -31,6 +31,7 @@ interface ExtractedActivity {
   registration_required: boolean;
   registration_url?: string | null;
   category?: string | null;
+  weather_suitability?: "indoor" | "outdoor" | "both" | null;
   notes?: string | null;
   pause_from?: string | null;
   pause_until?: string | null;
