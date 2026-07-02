@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 
-const SITE_URL = "https://rausmi.lovable.app";
+const SITE_URL = "https://rausmi.com";
 const DEFAULT_IMAGE =
   "https://storage.googleapis.com/gpt-engineer-file-uploads/m8lmUvGfEaXaqejbgyFXoogtsRq2/social-images/social-1777904842072-Captura_de_Tela_2026-05-04_%C3%A0s_16.25.54.webp";
 

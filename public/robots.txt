@@ -18,4 +18,4 @@ Disallow: /event-einreichen
 Disallow: /aktivitaet-einreichen
 Disallow: /kindercafe-einreichen
 
-Sitemap: https://rausmi.lovable.app/sitemap.xml
+Sitemap: https://rausmi.com/sitemap.xml
