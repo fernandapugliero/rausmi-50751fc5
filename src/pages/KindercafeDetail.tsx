@@ -82,10 +82,16 @@ const KindercafeDetail = () => {
             <span>🟠</span>
             <span>Rausmi</span>
           </Link>
-          {cafe.is_sponsored && (
+          {cafe.is_sponsored && !isClosed && (
             <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full">
               <Sparkles className="w-3 h-3" />
               Empfohlen
+            </span>
+          )}
+          {isClosed && (
+            <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-black/75 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/20">
+              <AlertTriangle className="w-3 h-3" />
+              Vorübergehend geschlossen
             </span>
           )}
         </header>
