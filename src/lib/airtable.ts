@@ -164,7 +164,7 @@ export async function loadAirtableActivities(): Promise<AirtableActivity[]> {
 
   const { data, error } = await supabase
     .from("activities")
-    .select("*")
+    .select("id,title,description,location_name,address,district,latitude,longitude,start_time,end_time,recurring,recurrence_rule,age_groups,is_free,price_info,registration_required,registration_url,category,image_url,source,source_url,is_approved,created_at,updated_at,source_id,external_key,last_seen_at,duplicate_of_activity_id,pause_from,pause_until")
     .eq("is_approved", true)
     .is("duplicate_of_activity_id", null);
 
@@ -208,9 +208,9 @@ export async function loadAirtableActivities(): Promise<AirtableActivity[]> {
         is_approved: true,
         created_at: row.created_at,
         updated_at: row.updated_at,
-        submitted_by: row.submitted_by,
-        submitter_email: row.submitter_email,
-        submitter_name: row.submitter_name,
+        submitted_by: null,
+        submitter_email: null,
+        submitter_name: null,
         _dayOfWeek: occ.dayOfWeek,
         _recurrenceType: row.recurring ? "weekly" : "once",
         _sponsored: false,

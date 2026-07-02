@@ -1,0 +1,1 @@
+REVOKE SELECT (submitter_name, submitter_email, submitted_by) ON public.activities FROM anon, authenticated;
