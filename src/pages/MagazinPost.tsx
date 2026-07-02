@@ -190,9 +190,6 @@ const MagazinPost = () => {
           </Link>
         </header>
 
-        <div className="flex-1 pb-10 pt-4">
-
-
         <article className="px-5 max-w-2xl mx-auto pt-4 space-y-6">
           <header className="space-y-2">
             <p className="text-xs font-bold uppercase tracking-widest text-primary">
