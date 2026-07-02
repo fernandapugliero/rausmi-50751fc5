@@ -1,5 +1,5 @@
 import { useState } from "react";
-import fixmydiaperMap from "@/assets/rausmi-fmd-map-20260702.jpg.asset.json";
+import fixmydiaperMap from "@/assets/fixmydiaper-map.jpg";
 import { SEO } from "@/components/SEO";
 import { Footer } from "@/components/Footer";
 import { Bookmark, Plus, ArrowUpRight, BookOpen } from "lucide-react";
@@ -191,7 +191,7 @@ const Index = () => {
               {/* Map image with pins */}
               <div className="relative w-[150px] shrink-0 overflow-hidden">
                 <img
-                  src={fixmydiaperMap.url}
+                  src={fixmydiaperMap}
                   alt=""
                   aria-hidden="true"
                   className="absolute inset-0 h-full w-full object-cover"
