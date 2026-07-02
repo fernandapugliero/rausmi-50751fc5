@@ -154,6 +154,28 @@ export const SourcesAdmin = () => {
         <div className="space-y-3">
           {sources.map((s) => {
             const latest = runsBySource?.[s.id];
+            const isManual = (s as { crawl_mode?: string }).crawl_mode === "manual";
+            // Health: green if success within 10d, red if failed, amber otherwise (empty / never / manual)
+            const ageDays = latest ? (Date.now() - new Date(latest.started_at).getTime()) / 86400000 : Infinity;
+            const health: "green" | "amber" | "red" | "gray" = isManual
+              ? "gray"
+              : latest?.status === "success" && ageDays < 10
+                ? "green"
+                : latest?.status === "failed"
+                  ? "red"
+                  : "amber";
+            const healthColor = {
+              green: "bg-emerald-500",
+              amber: "bg-amber-500",
+              red: "bg-red-500",
+              gray: "bg-muted-foreground/40",
+            }[health];
+            const healthTitle = {
+              green: "Läuft — letzte Extraktion erfolgreich",
+              amber: latest?.status === "empty" ? "Keine Aktivitäten gefunden" : "Noch nie gelaufen oder veraltet",
+              red: "Letzter Lauf fehlgeschlagen",
+              gray: "Manueller Modus — kein Auto-Crawl",
+            }[health];
             return (
               <div
                 key={s.id}
@@ -161,11 +183,17 @@ export const SourcesAdmin = () => {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-display font-semibold text-sm flex items-center gap-2">
+                    <h3 className="font-display font-semibold text-sm flex items-center gap-2 flex-wrap">
+                      <span className={`w-2.5 h-2.5 rounded-full ${healthColor} shrink-0`} title={healthTitle} />
                       {s.name}
                       {!s.is_active && (
                         <Badge variant="outline" className="text-[10px]">
                           inaktiv
+                        </Badge>
+                      )}
+                      {isManual && (
+                        <Badge variant="outline" className="text-[10px] border-primary/40 text-primary bg-primary/5">
+                          manuell
                         </Badge>
                       )}
                     </h3>
