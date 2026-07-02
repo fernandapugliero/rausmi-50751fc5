@@ -1,5 +1,6 @@
 import { useState } from "react";
 import fixmydiaperMap from "@/assets/rausmi-fmd-map-20260702.jpg.asset.json";
+import { SEO } from "@/components/SEO";
 import { Footer } from "@/components/Footer";
 import { Bookmark, Plus, ArrowUpRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,6 +26,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Rausmi – Aktivitäten mit Kindern in Berlin (Neukölln)"
+        description="Finde baby- und kinderfreundliche Aktivitäten, Krabbelgruppen, Familienzentren und Kindercafés in Berlin – jetzt, heute oder morgen."
+        path="/"
+      />
       <div className="flex-1 pb-10">
         <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
           <Link to="/">

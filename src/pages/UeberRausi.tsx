@@ -1,7 +1,7 @@
-import { useEffect } from "react";
 import { PageShell } from "@/components/PageShell";
 import { Link } from "react-router-dom";
 import { MapPin, Users, Baby, Heart, Music } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 const offerings = [
   { icon: MapPin, label: "Familienzentren" },
@@ -12,20 +12,13 @@ const offerings = [
 ];
 
 const UeberRausi = () => {
-  useEffect(() => {
-    document.title = "Über Rausmi – Aktivitäten für Kinder in Berlin finden";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) {
-      meta.setAttribute("content", "Rausmi hilft Familien in Berlin, Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu entdecken – für jetzt, heute oder morgen.");
-    } else {
-      const tag = document.createElement("meta");
-      tag.name = "description";
-      tag.content = "Rausmi hilft Familien in Berlin, Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu entdecken – für jetzt, heute oder morgen.";
-      document.head.appendChild(tag);
-    }
-  }, []);
-
   return (
+    <>
+      <SEO
+        title="Über Rausmi – Aktivitäten für Kinder in Berlin finden"
+        description="Rausmi hilft Familien in Berlin, Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu entdecken – für jetzt, heute oder morgen."
+        path="/ueber"
+      />
     <PageShell title="Über Rausmi">
       {/* Hero subtitle */}
       <div className="space-y-4">
@@ -103,6 +96,7 @@ const UeberRausi = () => {
         </Link>
       </section>
     </PageShell>
+    </>
   );
 };
 

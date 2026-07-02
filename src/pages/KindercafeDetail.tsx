@@ -4,6 +4,7 @@ import { MapPin, Globe, Mail, ExternalLink, Sparkles, AlertTriangle } from "luci
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import kindercafePlaceholder from "@/assets/kindercafe-placeholder.jpg";
+import { SEO } from "@/components/SEO";
 
 const KindercafeDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -59,8 +60,34 @@ const KindercafeDetail = () => {
         )}`
       : null);
 
+  const cafeJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CafeOrCoffeeShop",
+    name: cafe.name,
+    description: cafe.description || `${cafe.name} – Kindercafé in ${cafe.district || "Berlin"}.`,
+    ...(cafe.image_url ? { image: cafe.image_url } : {}),
+    ...(cafe.website_url ? { url: cafe.website_url } : {}),
+    ...(cafe.contact_email ? { email: cafe.contact_email } : {}),
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: cafe.address || undefined,
+      addressLocality: cafe.district || "Berlin",
+      addressRegion: "Berlin",
+      addressCountry: "DE",
+    },
+    areaServed: { "@type": "City", "name": "Berlin" },
+  };
+
   return (
     <div className="min-h-screen pb-28 bg-background">
+      <SEO
+        title={`${cafe.name} – Kindercafé in ${cafe.district || "Berlin"} | Rausmi`}
+        description={(cafe.description?.slice(0, 155)) || `${cafe.name}: Café mit Spielecke für Familien in ${cafe.district || "Berlin"}.`}
+        path={`/kindercafe/${cafe.id}`}
+        image={cafe.image_url || undefined}
+        type="article"
+        jsonLd={cafeJsonLd}
+      />
       {/* Immersive hero */}
       <div className="relative w-full h-[70vh] min-h-[420px] max-h-[720px] overflow-hidden">
         <img
