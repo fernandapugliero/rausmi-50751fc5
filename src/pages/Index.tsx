@@ -147,78 +147,95 @@ const Index = () => {
             </button>
           </section>
 
-          {/* Ad banner: FixMyDiaper — minimal card with pulsing blue map pins */}
+          {/* Ad banner: FixMyDiaper — brand card with mini OSM-style map */}
           <section>
             <a
               href="https://fixmydiaper.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative flex h-[150px] w-full overflow-hidden rounded-[2rem] border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg active:scale-[0.98]"
+              className="group relative flex h-[170px] w-full overflow-hidden rounded-[1.75rem] border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg active:scale-[0.99]"
             >
               {/* Content */}
               <div className="flex flex-1 flex-col justify-between p-5">
                 <div>
-                  <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Anzeige · FixMyDiaper
-                  </span>
+                  <div className="mb-2 flex items-center gap-2">
+                    {/* Safety-pin logo mark */}
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 text-foreground" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5 15 L18 4 a2.5 2.5 0 0 1 3.5 3.5 L9 20 a3 3 0 1 1 -4.2 -4.2 Z" />
+                      <circle cx="6.2" cy="17.8" r="1.6" />
+                    </svg>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Anzeige · FixMyDiaper
+                    </span>
+                  </div>
                   <h3 className="font-display text-lg font-bold leading-tight text-foreground">
                     Wickeltisch gesucht?
                   </h3>
                   <p className="mt-1 text-xs font-medium leading-snug text-muted-foreground">
-                    Babyfreundliche Orte in deiner Nähe.
+                    Babyfreundliche Orte mit Wickeltisch in deiner Nähe.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="rounded-full bg-foreground px-4 py-2 text-[11px] font-bold text-background">
-                    Karte öffnen
-                  </div>
-                  {/* Safety-pin logo mark */}
-                  <svg viewBox="0 0 24 24" className="h-5 w-5 text-foreground" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M5 15 L18 4 a2.5 2.5 0 0 1 3.5 3.5 L9 20 a3 3 0 1 1 -4.2 -4.2 Z" />
-                    <circle cx="6.2" cy="17.8" r="1.6" />
+                <div className="flex items-center gap-1 text-[13px] font-bold text-foreground">
+                  Karte öffnen
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M7 17 L17 7 M9 7 h8 v8" />
                   </svg>
                 </div>
               </div>
 
-              {/* Map graphic */}
-              <div className="relative w-[130px] shrink-0 overflow-hidden bg-muted/40">
-                {/* subtle grid */}
-                <svg className="absolute inset-0 h-full w-full opacity-20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <defs>
-                    <pattern id="fmd-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" fill="url(#fmd-grid)" />
+              {/* Mini OSM-style map */}
+              <div className="relative w-[150px] shrink-0 overflow-hidden" style={{ backgroundColor: "#e8ebe0" }}>
+                {/* park / green area */}
+                <div className="absolute" style={{ left: "55%", top: "-10%", width: "80%", height: "55%", backgroundColor: "#d4e0c4", borderRadius: "40% 30% 45% 25%" }} />
+                {/* water */}
+                <div className="absolute" style={{ left: "-10%", bottom: "-15%", width: "80%", height: "45%", backgroundColor: "#b8d4e0", borderRadius: "30% 55% 20% 40%" }} />
+                {/* streets */}
+                <svg className="absolute inset-0 h-full w-full" viewBox="0 0 150 170" aria-hidden="true">
+                  <line x1="-10" y1="60" x2="160" y2="90" stroke="#f0c674" strokeWidth="6" />
+                  <line x1="40" y1="-10" x2="80" y2="180" stroke="#f0c674" strokeWidth="6" />
+                  <line x1="120" y1="-10" x2="80" y2="180" stroke="#f0c674" strokeWidth="4" />
+                  <line x1="-10" y1="120" x2="160" y2="140" stroke="#ffffff" strokeWidth="3" />
                 </svg>
 
-                {/* pulsing blue pins */}
+                {/* map pins (droplet) */}
                 {[
-                  { x: "32%", y: "26%", size: "h-2.5 w-2.5", delay: "0s" },
-                  { x: "72%", y: "48%", size: "h-3 w-3", delay: "0.4s" },
-                  { x: "48%", y: "74%", size: "h-2 w-2", delay: "0.8s" },
-                  { x: "68%", y: "30%", size: "h-2.5 w-2.5", delay: "1.2s" },
+                  { x: 62, y: 40, size: 18 },
+                  { x: 105, y: 55, size: 20 },
+                  { x: 70, y: 95, size: 16 },
+                  { x: 115, y: 100, size: 18 },
+                  { x: 55, y: 130, size: 16 },
                 ].map((p, i) => (
-                  <span
+                  <svg
                     key={i}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white ${p.size}`}
-                    style={{
-                      left: p.x,
-                      top: p.y,
-                      backgroundColor: "#3b82f6",
-                      boxShadow: "0 0 10px rgba(59,130,246,0.55)",
-                      animation: `pulse 2.4s cubic-bezier(0.4,0,0.6,1) ${p.delay} infinite`,
-                    }}
+                    className="absolute drop-shadow-sm"
+                    style={{ left: p.x, top: p.y, width: p.size, height: p.size }}
+                    viewBox="0 0 24 24"
                     aria-hidden="true"
-                  />
+                  >
+                    <path
+                      d="M12 2 C7.6 2 4 5.6 4 10 c0 6 8 12 8 12 s8-6 8-12 c0-4.4-3.6-8-8-8 z"
+                      fill="#2563eb"
+                      stroke="#ffffff"
+                      strokeWidth="1.5"
+                    />
+                    <circle cx="12" cy="10" r="2.6" fill="#ffffff" />
+                  </svg>
                 ))}
 
+                {/* "you are here" ring pin */}
+                <div
+                  className="absolute rounded-full border-[3px] border-[#2563eb] bg-white"
+                  style={{ left: 88, top: 68, width: 14, height: 14 }}
+                  aria-hidden="true"
+                />
+
                 {/* soft blend into card */}
-                <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-card to-transparent" />
+                <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-card to-transparent" />
               </div>
             </a>
           </section>
+
 
 
 
