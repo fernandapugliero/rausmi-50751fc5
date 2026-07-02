@@ -9,6 +9,8 @@ import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import type { SearchFilters } from "@/lib/types";
+import fixMyDiaperBanner from "@/assets/fixmydiaper-banner.jpg";
+
 
 const Index = () => {
   const navigate = useNavigate();
