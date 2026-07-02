@@ -19,6 +19,8 @@ import Konto from "./pages/Konto";
 import Kontakt from "./pages/Kontakt";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
+import Magazin from "./pages/Magazin";
+import MagazinPost from "./pages/MagazinPost";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
 import CookieBanner from "./components/CookieBanner";
