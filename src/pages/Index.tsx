@@ -33,36 +33,17 @@ const Index = () => {
       />
       <div className="flex-1 pb-10">
         <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
-          <Link to="/">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
+          <Link to="/" aria-label="Rausmi Startseite">
+            <div className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
               <span className="text-2xl">🟠</span>
               <span>Rausmi</span>
-            </h1>
-
+            </div>
           </Link>
-          {user ? (
-            <Link
-              to="/konto"
-              className="text-sm text-primary font-semibold hover:underline transition-colors"
-            >
-              Mein Konto
-            </Link>
-          ) : (
-            <button
-              onClick={() => setShowAuthDialog(true)}
-              className="text-sm text-primary font-semibold hover:underline transition-colors"
-            >
-              Anmelden
-            </button>
-          )}
-        </header>
-
-        <div className="px-5 space-y-8 max-w-3xl mx-auto">
-          {/* Hero */}
+...
           <section className="pt-6 pb-2 text-center space-y-2">
-            <h2 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
+            <h1 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
               Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin<span className="text-primary align-super text-2xl">*</span> machen kannst.
-            </h2>
+            </h1>
             <p className="text-sm text-muted-foreground">
               <span className="font-semibold uppercase tracking-wide text-[11px] text-primary/80 mr-1.5">Beta</span>
               *aktuell nur in Neukölln verfügbar

@@ -1,0 +1,23 @@
+# Rausmi
+
+> Rausmi hilft Eltern in Berlin, spontan baby- und kinderfreundliche Aktivitäten, Krabbelgruppen, Familienzentren und Kindercafés zu finden – jetzt, heute oder morgen. Aktuell im Beta-Betrieb mit Fokus auf den Bezirk Neukölln.
+
+Rausmi ist eine deutschsprachige Plattform für Familien in Berlin. Der Kern ist eine Suche nach Zeit (jetzt / heute / morgen / Datum), die laufende und kommende Aktivitäten für Kinder anzeigt – kostenlose und kostenpflichtige, mit Ort, Uhrzeit, Altersgruppe und Quelle. Zusätzlich pflegt Rausmi eine kuratierte Liste von Kindercafés mit Spielecke ("FixMyDiaper" – Wickeltische in der Nähe).
+
+## Hauptseiten
+- [Startseite](https://rausmi.com/): Suche nach Aktivitäten nach Zeit, Übersicht der Kindercafés und Community-Funktionen.
+- [Über Rausmi](https://rausmi.com/ueber): Mission, Team und Idee hinter dem Projekt.
+
+## Aktivitäten nach Zeit
+- [Jetzt](https://rausmi.com/jetzt): Aktivitäten für Kinder, die gerade in Berlin laufen oder gleich starten.
+- [Heute](https://rausmi.com/heute): Alle kinderfreundlichen Termine für den aktuellen Tag.
+- [Morgen](https://rausmi.com/morgen): Aktivitäten und Angebote für den nächsten Tag.
+- [Datum wählen](https://rausmi.com/datum): Freie Datumsauswahl für Wochen- und Monatsplanung.
+
+## Community
+- [Aktivität einreichen](https://rausmi.com/einreichen): Formular, um eine Kinderaktivität für die Redaktion einzureichen.
+- [Newsletter](https://rausmi.com/newsletter): Wöchentliche Empfehlungen für ausgewählte Berliner Bezirke.
+
+## Optional
+- [Impressum](https://rausmi.com/impressum)
+- [Datenschutz](https://rausmi.com/datenschutz)
