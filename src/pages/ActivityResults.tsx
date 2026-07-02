@@ -45,6 +45,35 @@ const ActivityResults = ({ defaultTimeRange, title }: ActivityResultsProps) => {
   const [showStarting, setShowStarting] = useState(true);
   const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
   const { user } = useAuth();
+  const [ageAutoApplied, setAgeAutoApplied] = useState(false);
+
+  // Pre-filter by youngest child's age when the user is logged in and has profile data.
+  useEffect(() => {
+    if (!user || ageAutoApplied) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("children_ages")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      const ages = (data?.children_ages ?? []) as number[];
+      if (!ages.length) {
+        setAgeAutoApplied(true);
+        return;
+      }
+      const youngest = Math.min(...ages);
+      const ageGroup =
+        youngest < 1 ? "0-1" : youngest < 3 ? "1-3" : "3+";
+      setFilters((f) => (f.ageGroup ? f : { ...f, ageGroup }));
+      setAgeAutoApplied(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, ageAutoApplied]);
+
 
   // Time-of-day range slider (everything except "now")
   const showTimeSlider = defaultTimeRange !== "now";
