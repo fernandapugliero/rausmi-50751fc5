@@ -19,7 +19,7 @@ import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
-type Tab = "pending" | "approved" | "sources" | "crawler" | "reports" | "newsletter";
+type Tab = "pending" | "approved" | "sources" | "crawler" | "reports" | "newsletter" | "installs";
 
 
 const Admin = () => {
