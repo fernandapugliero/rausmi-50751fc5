@@ -209,6 +209,16 @@ const Admin = () => {
             <Mail className="w-3.5 h-3.5" />
             Newsletter
           </Button>
+          <Button
+            variant={tab === "installs" ? "default" : "outline"}
+            size="sm"
+            className="rounded-full gap-1.5"
+            onClick={() => setTab("installs")}
+            title="PWA-Installationen und Standalone-Öffnungen"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            Installs
+          </Button>
         </div>
 
         {tab === "sources" ? (
@@ -219,6 +229,9 @@ const Admin = () => {
           <ReportsAdmin />
         ) : tab === "newsletter" ? (
           <NewsletterAdmin />
+        ) : tab === "installs" ? (
+          <PwaInstallsAdmin />
+
 
         ) : isLoading ? (
           <div className="space-y-3">
