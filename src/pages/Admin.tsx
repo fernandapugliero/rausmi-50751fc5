@@ -13,6 +13,7 @@ import { CrawlerOverridesAdmin } from "@/components/CrawlerOverridesAdmin";
 import { SourcesAdmin } from "@/components/SourcesAdmin";
 import { ReportsAdmin } from "@/components/ReportsAdmin";
 import { NewsletterAdmin } from "@/components/NewsletterAdmin";
+import { PwaInstallsAdmin } from "@/components/PwaInstallsAdmin";
 import { AdminStatusCard } from "@/components/AdminStatusCard";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
