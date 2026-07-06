@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Check, Trash2, Eye, EyeOff, Settings, Database, Flag, Mail } from "lucide-react";
+import { ArrowLeft, Check, Trash2, Eye, EyeOff, Settings, Database, Flag, Mail, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -13,12 +13,13 @@ import { CrawlerOverridesAdmin } from "@/components/CrawlerOverridesAdmin";
 import { SourcesAdmin } from "@/components/SourcesAdmin";
 import { ReportsAdmin } from "@/components/ReportsAdmin";
 import { NewsletterAdmin } from "@/components/NewsletterAdmin";
+import { PwaInstallsAdmin } from "@/components/PwaInstallsAdmin";
 import { AdminStatusCard } from "@/components/AdminStatusCard";
 import { AuthDialog } from "@/components/AuthDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
-type Tab = "pending" | "approved" | "sources" | "crawler" | "reports" | "newsletter";
+type Tab = "pending" | "approved" | "sources" | "crawler" | "reports" | "newsletter" | "installs";
 
 
 const Admin = () => {
@@ -208,6 +209,16 @@ const Admin = () => {
             <Mail className="w-3.5 h-3.5" />
             Newsletter
           </Button>
+          <Button
+            variant={tab === "installs" ? "default" : "outline"}
+            size="sm"
+            className="rounded-full gap-1.5"
+            onClick={() => setTab("installs")}
+            title="PWA-Installationen und Standalone-Öffnungen"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            Installs
+          </Button>
         </div>
 
         {tab === "sources" ? (
@@ -218,6 +229,9 @@ const Admin = () => {
           <ReportsAdmin />
         ) : tab === "newsletter" ? (
           <NewsletterAdmin />
+        ) : tab === "installs" ? (
+          <PwaInstallsAdmin />
+
 
         ) : isLoading ? (
           <div className="space-y-3">

@@ -35,7 +35,11 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => (
+import { usePwaInstallTracking } from "./hooks/usePwaInstallTracking";
+
+const App = () => {
+  usePwaInstallTracking();
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -68,6 +72,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
