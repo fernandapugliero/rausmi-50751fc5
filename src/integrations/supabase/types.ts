@@ -395,6 +395,30 @@ export type Database = {
         }
         Relationships: []
       }
+      pwa_install_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          platform: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          platform?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          platform?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       source_runs: {
         Row: {
           error: string | null
